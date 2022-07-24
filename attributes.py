@@ -20,4 +20,3 @@ class NodeAttributes:
     attribute_name: str
     attribute_type: AttributeType
     threshold: float = None
-    test_fn: Callable[float, float] = None
