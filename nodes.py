@@ -162,3 +162,7 @@ class LeafNode(Node):
     def get_classes_distribution(self) -> dict:
         """ Returns the number of examples of a class contained in the node after the training """
         return self._attributes.classes.get_classes_distribution()
+
+    def get_leaf_purity(self) -> float:
+        """ returns the purity of the targets distribution """
+        return self._attributes.classes.get_purity()

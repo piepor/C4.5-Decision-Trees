@@ -1,3 +1,4 @@
+import numpy as np
 from dataclasses import dataclass
 from predicting import get_distribution
 
@@ -18,3 +19,7 @@ class LeafClasses:
     def get_classes_distribution(self) -> dict:
         """ Returns the distribution over the classes inside the leaf """
         return get_distribution(self.classes)
+
+    def get_purity(self) -> float:
+        """ returns the percentage of the class with more samples (purity) """
+        return np.round(self.get_classes_distribution()[self.get_class_name()], 4)

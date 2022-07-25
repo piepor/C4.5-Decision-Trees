@@ -41,3 +41,8 @@ def test_get_class_distribution(root_node, leaf_attributes):
             "target_a": np.round(20/23, 4),
             "target_b": np.round(3/23, 4)}
     assert leaf_node.get_classes_distribution() == expected_distribution
+
+def test_get_leaf_purity(root_node, leaf_attributes):
+    leaf_node = LeafNode(leaf_attributes, root_node)
+    root_node.add_child(leaf_node)
+    assert leaf_node.get_leaf_purity() == np.round(20/23, 4)
