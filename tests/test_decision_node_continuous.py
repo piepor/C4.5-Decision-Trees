@@ -1,22 +1,22 @@
 from nodes import DecisionNodeContinuous
-from attributes import NodeAttributes, AttributeType
+from attributes import DecisionNodeAttributes, AttributeType
 import pytest
 
 @pytest.fixture
 def root_attributes():
-    return NodeAttributes(0, "root", "A", AttributeType.CONTINUOUS, 10.0)
+    return DecisionNodeAttributes(0, "root", "A", AttributeType.CONTINUOUS, 10.0)
 
 @pytest.fixture
 def root_attributes_negative():
-    return NodeAttributes(0, "root", "A", AttributeType.CONTINUOUS, -10.0)
+    return DecisionNodeAttributes(0, "root", "A", AttributeType.CONTINUOUS, -10.0)
 
 @pytest.fixture
 def node_a_attributes():
-    return NodeAttributes(1, "A <= 10.0", "B", AttributeType.CONTINUOUS, 10.0)
+    return DecisionNodeAttributes(1, "A <= 10.0", "B", AttributeType.CONTINUOUS, 10.0)
 
 @pytest.fixture
 def node_b_attributes():
-    return NodeAttributes(1, "A > 10.0", "C", AttributeType.CONTINUOUS, 10.0)
+    return DecisionNodeAttributes(1, "A > 10.0", "C", AttributeType.CONTINUOUS, 10.0)
 
 def test_wrong_input_type(root_attributes):
     root_node = DecisionNodeContinuous(root_attributes, None)

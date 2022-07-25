@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from dataclasses import dataclass
 from typing import Callable
+from leaf_classes import LeafClasses
 
 
 class AttributeType(Enum):
@@ -13,10 +14,17 @@ class AttributeType(Enum):
 
 
 @dataclass
-class NodeAttributes:
+class DecisionNodeAttributes:
     """ attributes class """
     node_level: int
     node_name: str
     attribute_name: str
     attribute_type: AttributeType
     threshold: float = None
+
+@dataclass
+class LeafNodeAttributes:
+    """ attributes class """
+    node_level: int
+    node_name: str
+    classes: LeafClasses

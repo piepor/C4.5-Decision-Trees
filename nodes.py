@@ -2,8 +2,9 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Callable
-from attributes import NodeAttributes, AttributeType
+from attributes import DecisionNodeAttributes, AttributeType, LeafNodeAttributes
 from predicting import continuous_test_fn
+from checking import check_attributes
 
 class Node(ABC):
     """ Class implementing a generic node of a decision tree """
@@ -16,40 +17,17 @@ class Node(ABC):
         """ Returns the name of the node """
 
     @abstractmethod
-    def get_attribute(self) -> str:
-        """ Returns the attribute of the node """
-
-    @abstractmethod
     def get_parent_node(self) -> Node:
         """ Get the node's parent """
 
 
 class DecisionNode(Node):
     """ Class implementing a decision node of a decision tree """
-    def __init__(self, attributes: NodeAttributes, parent_node: Node):
-        self._check_attributes(attributes, parent_node)
+    def __init__(self, attributes: DecisionNodeAttributes, parent_node: Node):
+        check_attributes(attributes, parent_node)
         self._parent_node = parent_node
         self._childs = set()
         self._attributes = attributes
-
-    def _check_attributes(self, attributes, parent_node):
-        if attributes.node_name == "root" and not attributes.node_level == 0:
-            raise ValueError("Root node must have level 0")
-        if attributes.node_level < 0:
-            raise ValueError(f"Level must be positive. \
-                    Node [{attributes.node_name}] - Parent [{parent_node.get_label()}")
-        if attributes.attribute_type == AttributeType.CONTINUOUS and not attributes.threshold:
-            parent_name = None
-            if parent_node:
-                parent_name = parent_node.get_label() # the root node does not have a parent node
-            raise ValueError(f"A continuous type must have a threshold. \
-                    Node [{attributes.node_name}] - Parent [{parent_name}")
-        if not attributes.attribute_type == AttributeType.CONTINUOUS and attributes.threshold:
-            parent_name = None
-            if parent_node:
-                parent_name = parent_node.get_label() # the root node does not have a parent node
-            raise ValueError(f"A threshold has been set on non continuous node type. \
-                    Node [{attributes.node_name}] - Parent [{parent_name}")
 
     def get_level(self) -> int:
         """ Returns the level of the node in the tree """
@@ -59,13 +37,13 @@ class DecisionNode(Node):
         """ Returns the name of the node """
         return self._attributes.node_name
 
-    def get_attribute(self) -> str:
-        """ Returns the attribute of the node """
-        return self._attributes.attribute_name
-
     def get_parent_node(self) -> Node:
         """ Get the node's parent """
         return self._parent_node
+
+    def get_attribute(self) -> str:
+        """ Returns the attribute of the node """
+        return self._attributes.attribute_name
 
     def add_child(self, child):
         """ Adds another node to the set of node childs """
@@ -150,3 +128,37 @@ class DecisionNodeCategorical(DecisionNode):
             "Can't find a child compatible with {self._attributes.attribute_name} \
             {attr_value}. Node [{attributes.node_name}] - Parent [{parent_name}")
         return required_child
+
+
+class LeafNode(Node):
+    """ class implementing a leaf node of the decision tree """
+    def __init__(self, attributes: LeafNodeAttributes, parent_node: Node):
+        #self._check_attributes(attributes, parent_node)
+        self._parent_node = parent_node
+        self._childs = set()
+        self._attributes = attributes
+        # The label class of the node is the class with maximum number of examples
+
+    def get_level(self) -> int:
+        """ Returns the level of the node in the tree """
+        return self._attributes.node_level
+
+    def get_label(self) -> str:
+        """ Returns the name of the node """
+        return self._attributes.node_name
+
+    def get_parent_node(self) -> Node:
+        """ Get the node's parent """
+        return self._parent_node
+
+    def get_class_name(self) -> list:
+        """ Returns the classes with maximum number """
+        return self._attributes.classes.get_class_name()
+
+    def get_classes(self) -> dict:
+        """ Returns the classes contained in the node after the training """
+        return self._attributes.classes.get_classes()
+
+    def get_classes_distribution(self) -> dict:
+        """ Returns the number of examples of a class contained in the node after the training """
+        return self._attributes.classes.get_classes_distribution()

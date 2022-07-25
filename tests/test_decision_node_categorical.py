@@ -1,22 +1,22 @@
 import pytest
-from attributes import AttributeType, NodeAttributes
+from attributes import AttributeType, DecisionNodeAttributes
 from nodes import DecisionNodeCategorical
 
 @pytest.fixture
 def root_attributes():
-    return NodeAttributes(0, "root", "A", AttributeType.CATEGORICAL, None)
+    return DecisionNodeAttributes(0, "root", "A", AttributeType.CATEGORICAL, None)
 
 @pytest.fixture
 def node_a_attributes():
-    return NodeAttributes(1, "A = Red", "B", AttributeType.CATEGORICAL, None)
+    return DecisionNodeAttributes(1, "A = Red", "B", AttributeType.CATEGORICAL, None)
 
 @pytest.fixture
 def node_b_attributes():
-    return NodeAttributes(1, "A = Blue", "C", AttributeType.CATEGORICAL, None)
+    return DecisionNodeAttributes(1, "A = Blue", "C", AttributeType.CATEGORICAL, None)
 
 @pytest.fixture
 def node_c_attributes():
-    return NodeAttributes(1, "A = Green", "D", AttributeType.CATEGORICAL, None)
+    return DecisionNodeAttributes(1, "A = Green", "D", AttributeType.CATEGORICAL, None)
 
 def test_wrong_input_type(root_attributes):
     """ test exception with wrong input """

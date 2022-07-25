@@ -1,19 +1,19 @@
 from nodes import DecisionNode
-from attributes import NodeAttributes, AttributeType
+from attributes import DecisionNodeAttributes, AttributeType
 from predicting import continuous_test_fn
 import pytest
 
 @pytest.fixture
 def root_attributes():
-    return NodeAttributes(0, "root", "A", AttributeType.CONTINUOUS, 10.0)
+    return DecisionNodeAttributes(0, "root", "A", AttributeType.CONTINUOUS, 10.0)
 
 @pytest.fixture
 def node_a_attributes():
-    return NodeAttributes(1, "A <= 10", "B", AttributeType.CONTINUOUS, 10.0)
+    return DecisionNodeAttributes(1, "A <= 10", "B", AttributeType.CONTINUOUS, 10.0)
 
 @pytest.fixture
 def node_b_attributes():
-    return NodeAttributes(1, "A > 10", "B", AttributeType.CONTINUOUS, 10.0)
+    return DecisionNodeAttributes(1, "A > 10", "B", AttributeType.CONTINUOUS, 10.0)
 
 def test_dn_negative_level(root_attributes):
     """ level cannot be negative """

@@ -1,18 +1,18 @@
 import pytest
-from attributes import AttributeType, NodeAttributes
+from attributes import AttributeType, DecisionNodeAttributes
 from nodes import DecisionNodeBoolean
 
 @pytest.fixture
 def root_attributes():
-    return NodeAttributes(0, "root", "A", AttributeType.BOOLEAN, None)
+    return DecisionNodeAttributes(0, "root", "A", AttributeType.BOOLEAN, None)
 
 @pytest.fixture
 def node_a_attributes():
-    return NodeAttributes(1, "A = True", "B", AttributeType.BOOLEAN, None)
+    return DecisionNodeAttributes(1, "A = True", "B", AttributeType.BOOLEAN, None)
 
 @pytest.fixture
 def node_b_attributes():
-    return NodeAttributes(1, "A = False", "C", AttributeType.BOOLEAN, None)
+    return DecisionNodeAttributes(1, "A = False", "C", AttributeType.BOOLEAN, None)
 
 def test_wrong_input_type(root_attributes):
     """ test exception with wrong input """
