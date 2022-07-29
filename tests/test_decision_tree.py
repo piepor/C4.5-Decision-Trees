@@ -98,6 +98,50 @@ def paper_tree():
     paper_tree.prediction_handler = PredictionHandler(paper_tree.get_leaves_nodes())
     return paper_tree
 
+@pytest.fixture
+def paper_tree_unknown():
+    # example in the paper of tree trained with unknown attribute
+    attributes_map = {
+            "Outlook": "categorical", "Humidity": "continuous",
+            "Windy": "boolean", "Temperature": "continuous"}
+    attributes_tree = DecisionTreeAttributes(attributes_map)
+    paper_tree_unknown = DecisionTree(attributes_tree)
+    root_node_attr = DecisionNodeAttributes(0, "root", NodeType.DECISION_NODE_CATEGORICAL,
+            "Outlook", AttributeType.CATEGORICAL)
+    sunny_node_attr = DecisionNodeAttributes(1, "Outlook = sunny",
+            NodeType.DECISION_NODE_CONTINUOUS,
+            "Humidity", AttributeType.CONTINUOUS, float(75))
+    humidity_low_node_attr = LeafNodeAttributes(2, f"Humidity <= {float(75)}", NodeType.LEAF_NODE,
+            {"Play": 2.0})
+    humidity_high_node_attr = LeafNodeAttributes(2, f"Humidity > {float(75)}", NodeType.LEAF_NODE,
+            {"Don't Play": 3.0, "Play": 0.4})
+    overcast_node_attr = LeafNodeAttributes(1, "Outlook = overcast", NodeType.LEAF_NODE,
+            {"Play": 3.0, "Don't Play": 0.2})
+    rain_node_attr = DecisionNodeAttributes(1, "Outlook = rain", NodeType.DECISION_NODE_CATEGORICAL,
+            "Windy", AttributeType.BOOLEAN)
+    windy_true_node_attr = LeafNodeAttributes(2, "Windy = True", NodeType.LEAF_NODE,
+            {"Don't Play": 2, "PLay": 0.4})
+    windy_false_node_attr = LeafNodeAttributes(2, "Windy = False", NodeType.LEAF_NODE,
+            {"Play": 3.0})
+    root_node = paper_tree_unknown.create_node(root_node_attr, None)
+    paper_tree_unknown.add_root_node(root_node)
+    sunny_node = paper_tree_unknown.create_node(sunny_node_attr, root_node)
+    paper_tree_unknown.add_node(sunny_node)
+    humidity_low_node = paper_tree_unknown.create_node(humidity_low_node_attr, sunny_node)
+    paper_tree_unknown.add_node(humidity_low_node)
+    humidity_high_node = paper_tree_unknown.create_node(humidity_high_node_attr, sunny_node)
+    paper_tree_unknown.add_node(humidity_high_node)
+    overcast_node = paper_tree_unknown.create_node(overcast_node_attr, root_node)
+    paper_tree_unknown.add_node(overcast_node)
+    rain_node = paper_tree_unknown.create_node(rain_node_attr, root_node)
+    paper_tree_unknown.add_node(rain_node)
+    windy_true_node = paper_tree_unknown.create_node(windy_true_node_attr, rain_node)
+    paper_tree_unknown.add_node(windy_true_node)
+    windy_false_node = paper_tree_unknown.create_node(windy_false_node_attr, rain_node)
+    paper_tree_unknown.add_node(windy_false_node)
+    paper_tree_unknown.prediction_handler = PredictionHandler(paper_tree_unknown.get_leaves_nodes())
+    return paper_tree_unknown
+
 def test_add_node(decision_tree, root_attributes, node_a_attributes):
     root_node = decision_tree.create_node(root_attributes, None)
     decision_tree.add_root_node(root_node)
@@ -106,7 +150,6 @@ def test_add_node(decision_tree, root_attributes, node_a_attributes):
     assert root_node in decision_tree.get_nodes()
     assert node_a.get_parent_node() == root_node
     assert root_node.get_child(5.0) == node_a
-
 
 def test_delete_node(decision_tree, root_attributes, node_a_attributes):
     root_node = decision_tree.create_node(root_attributes, None)
@@ -117,7 +160,6 @@ def test_delete_node(decision_tree, root_attributes, node_a_attributes):
     assert root_node in decision_tree.get_nodes()
     assert node_a not in decision_tree.get_nodes()
     assert node_a not in root_node.get_children()
-
 
 def test_add_root_node(decision_tree, root_attributes, node_a_attributes):
     root_node = decision_tree.create_node(root_attributes, None)
@@ -151,3 +193,18 @@ def test_predict_known(paper_tree, paper_dataset):
     targets = paper_dataset['target']
     predictions, _ = paper_tree.predict(paper_dataset.drop(columns=['target']))
     assert predictions == targets.tolist()
+
+def test_predict_unknown(paper_tree_unknown):
+    data_input = pd.DataFrame.from_dict({
+        "Outlook": ["sunny"], "Temperature": [70], "Humidity": [None], "Windy": [False]})
+    predictions, _ = paper_tree_unknown.predict(data_input)
+    assert predictions[0] == "Don't Play"
+
+def test_distribution_unknown(paper_tree_unknown):
+    data_input = pd.DataFrame.from_dict({
+        "Outlook": ["sunny"], "Temperature": [70], "Humidity": [None], "Windy": [False]})
+    _, distr = paper_tree_unknown.predict(data_input)
+    expected_distr = {
+            "Play": np.round(2.0/5.4 * 2.0/2.0 + 3.4/5.4 * 0.4/3.4, 4),
+            "Don't Play": np.round(3.4/5.4 * 3/3.4, 4)}
+    assert distr[0] == expected_distr

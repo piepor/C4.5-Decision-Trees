@@ -9,15 +9,11 @@ class PredictionHandler:
     """ Takes care of the prediction part """
     def __init__(self, leaves_nodes):
         self._predictions_dict = create_predictions_dict(leaves_nodes)
-        self._predictions = []
-        self._total_sum = 0
 
     def reset_predictions(self):
         """ Resets the predictions list and predictions dictionary """
         for target in self._predictions_dict:
             self._predictions_dict[target] = []
-        self._total_sum = 0
-        self._predictions = []
 
     def _predict(self, row_input: pd.Series, node: Node):
         attribute = node.get_attribute().split(":")[0]
@@ -25,8 +21,7 @@ class PredictionHandler:
         childs = select_children_for_prediction(row_input[attribute], node)
         for child in childs:
             if isinstance(child, LeafNode):
-                for target in child.get_classes():
-                    self._predictions_dict[target].append(child.get_classes()[target])
+                self._predictions_dict[child.get_label()] = child.get_classes()
             else:
                 self._predict(row_input, child)
 

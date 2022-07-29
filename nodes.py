@@ -175,13 +175,13 @@ class LeafNode(Node):
         """ get the class with maximum number of samples """
         return max(zip(self._attributes.classes.values(), self._attributes.classes.keys()))[1]
 
-    def _get_classes_distribution(self) -> dict:
+    def get_classes_distribution(self) -> dict:
         """ Returns the distribution over the classes inside the leaf """
         return get_distribution(self._attributes.classes)
 
     def get_purity(self) -> float:
         """ returns the percentage of the class with more samples (purity) """
-        return np.round(self._get_classes_distribution()[self._get_class_name()], 4)
+        return np.round(self.get_classes_distribution()[self._get_class_name()], 4)
 
     def get_classes(self) -> dict:
         """ return the classes dictionary """
@@ -194,29 +194,3 @@ class LeafNode(Node):
     def get_instances_number(self) -> int:
         """ returns the number of samples classified in the leaf """
         return sum(self._attributes.classes.values())
-#    def get_class_name(self) -> list:
-#        """ Returns the classes with maximum number """
-#        return self._attributes.classes.get_class_name()
-#
-#    def get_classes(self) -> dict:
-#        """ Returns the classes contained in the node after the training """
-#        return self._attributes.classes.get_classes()
-#
-#    def get_classes_distribution(self) -> dict:
-#        """ Returns the number of examples of a class contained in the node after the training """
-#        return self._attributes.classes.get_classes_distribution()
-#
-#    def get_leaf_purity(self) -> float:
-#        """ returns the purity of the targets distribution """
-#        return self._attributes.classes.get_purity()
-#
-#    def get_classes_frequency_dictionary(self) -> dict:
-#        """
-#        returns a dictionary containining for each class its frequency and the total
-#        number of samples in the leaf
-#        """
-#        return self._attributes.classes.classes_frequency_dictionary()
-#
-#    def get_total_sum(self) -> int:
-#        """ returns the total number of samples in the leaf """
-#        return self._attributes.classes.get_total_sum()
