@@ -10,7 +10,6 @@ class NodeType(Enum):
     """ types of node in the decision tree """
     DECISION_NODE_CONTINUOUS = auto()
     DECISION_NODE_CATEGORICAL = auto()
-    DECISION_NODE_BOOLEAN = auto()
     LEAF_NODE = auto()
 
 
@@ -40,7 +39,8 @@ class DecisionNodeAttributes(NodeAttributes):
 @dataclass
 class LeafNodeAttributes(NodeAttributes):
     """ leaf attributes class """
-    classes: LeafClasses
+    #classes: LeafClasses
+    classes: dict
 
 
 @dataclass
@@ -60,7 +60,7 @@ def from_str_to_enum(attributes_map: dict) -> dict:
         elif attributes_map[name] == "categorical":
             attributes_map[name] = AttributeType.CATEGORICAL
         elif attributes_map[name] == "boolean":
-            attributes_map[name] = AttributeType.CATEGORICAL
+            attributes_map[name] = AttributeType.BOOLEAN
         else:
             raise TypeError("Attribute type not supported")
     return attributes_map
