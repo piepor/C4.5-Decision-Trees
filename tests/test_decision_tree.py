@@ -4,7 +4,6 @@ import numpy as np
 from decision_tree_refactor import DecisionTree
 from attributes import DecisionTreeAttributes, DecisionNodeAttributes
 from attributes import NodeType, AttributeType, LeafNodeAttributes
-from leaf_classes import LeafClasses
 from nodes import DecisionNodeContinuous
 from predictor import PredictionHandler
 
@@ -117,7 +116,7 @@ def test_delete_node(decision_tree, root_attributes, node_a_attributes):
     decision_tree.delete_node(node_a)
     assert root_node in decision_tree.get_nodes()
     assert node_a not in decision_tree.get_nodes()
-    assert node_a not in root_node.get_childs()
+    assert node_a not in root_node.get_children()
 
 
 def test_add_root_node(decision_tree, root_attributes, node_a_attributes):

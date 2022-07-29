@@ -37,7 +37,7 @@ def test_adding_child(root_attributes, node_a_attributes):
     root_node = DecisionNodeCategorical(root_attributes, None)
     node_a = DecisionNodeCategorical(node_a_attributes, root_node)
     root_node.add_child(node_a)
-    assert root_node.get_childs() == set([node_a])
+    assert root_node.get_children() == set([node_a])
 
 def test_adding_childs(root_attributes, node_a_attributes, node_b_attributes):
     """ add two childs """
@@ -46,7 +46,7 @@ def test_adding_childs(root_attributes, node_a_attributes, node_b_attributes):
     node_b = DecisionNodeCategorical(node_b_attributes, root_node)
     root_node.add_child(node_a)
     root_node.add_child(node_b)
-    assert root_node.get_childs() == set([node_a, node_b])
+    assert root_node.get_children() == set([node_a, node_b])
 
 def test_delete_child(root_attributes, node_a_attributes, node_b_attributes):
     """ delete a child """
@@ -56,4 +56,4 @@ def test_delete_child(root_attributes, node_a_attributes, node_b_attributes):
     root_node.add_child(node_a)
     root_node.add_child(node_b)
     root_node.delete_child(node_a)
-    assert root_node.get_childs() == set([node_b])
+    assert root_node.get_children() == set([node_b])

@@ -2,7 +2,6 @@ import pytest
 import numpy as np
 from nodes import LeafNode, DecisionNodeContinuous
 from attributes import LeafNodeAttributes, AttributeType, DecisionNodeAttributes, NodeType
-from leaf_classes import LeafClasses
 from node_functions import get_distribution
 
 @pytest.fixture

@@ -2,7 +2,7 @@
 import numpy as np
 from nodes import Node
 
-def select_childs_for_prediction(attr_value: str | bool | float, node: Node) -> list[Node]:
+def select_children_for_prediction(attr_value: str | bool | float, node: Node) -> list[Node]:
     """ returns childs based on attribute known or unknown """
     if attr_value == "?":
         return node.get_childs()

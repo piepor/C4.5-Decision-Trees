@@ -1,6 +1,6 @@
 import copy
 import pandas as pd
-from predicting import create_predictions_dict, select_childs_for_prediction
+from predicting import create_predictions_dict, select_children_for_prediction
 from nodes import Node, LeafNode
 from predicting import get_predictions_distribution
 
@@ -21,7 +21,8 @@ class PredictionHandler:
 
     def _predict(self, row_input: pd.Series, node: Node):
         attribute = node.get_attribute().split(":")[0]
-        childs = select_childs_for_prediction(row_input[attribute], node)
+        # in case of unknown variable more the data are passed to all children
+        childs = select_children_for_prediction(row_input[attribute], node)
         for child in childs:
             if isinstance(child, LeafNode):
                 for target in child.get_classes():

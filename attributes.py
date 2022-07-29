@@ -3,7 +3,6 @@ from __future__ import annotations
 from enum import Enum, auto
 from dataclasses import dataclass
 from typing import Callable
-from leaf_classes import LeafClasses
 
 
 class NodeType(Enum):

@@ -38,7 +38,7 @@ class DecisionNode(Node):
         """ Removes a node from the set of node childs """
 
     @abstractmethod
-    def get_childs(self) -> set:
+    def get_children(self) -> set:
         """ Returns the set of the node childs """
 
     @abstractmethod
@@ -78,7 +78,7 @@ class DecisionNodeContinuous(DecisionNode):
         """ Removes a node from the set of node childs """
         self._childs.remove(child)
 
-    def get_childs(self) -> set:
+    def get_children(self) -> set:
         """ Returns the set of the node childs """
         return self._childs
 
@@ -95,7 +95,7 @@ class DecisionNodeContinuous(DecisionNode):
     def get_child(self, attr_value: float) -> Node:
         """ Returns the child compatible with the attribute value """
         required_child = None
-        for child in self.get_childs():
+        for child in self.get_children():
             if child.get_label() == self.run_test(attr_value):
                 required_child = child
         return required_child
@@ -106,7 +106,7 @@ class DecisionNodeCategorical(DecisionNode):
     def __init__(self, attributes: DecisionNodeAttributes, parent_node: Node):
         #check_attributes(attributes, parent_node)
         self._parent_node = parent_node
-        self._childs = set()
+        self._children = set()
         self._attributes = attributes
 
     def get_level(self) -> int:
@@ -127,15 +127,15 @@ class DecisionNodeCategorical(DecisionNode):
 
     def add_child(self, child):
         """ Adds another node to the set of node childs """
-        self._childs.add(child)
+        self._children.add(child)
 
     def delete_child(self, child):
         """ Removes a node from the set of node childs """
-        self._childs.remove(child)
+        self._children.remove(child)
 
-    def get_childs(self) -> set:
+    def get_children(self) -> set:
         """ Returns the set of the node childs """
-        return self._childs
+        return self._children
 
     def run_test(self, attr_value: str | bool) -> str:
         """ runs the test on attr_value and returns the test as a string """
@@ -144,7 +144,7 @@ class DecisionNodeCategorical(DecisionNode):
     def get_child(self, attr_value: str | bool) -> Node:
         """ Returns the child fulfilling the condition given by the attribute value """
         required_child = None
-        for child in self.get_childs():
+        for child in self.get_children():
             if child.get_label() == self.run_test(attr_value):
                 required_child = child
         return required_child
