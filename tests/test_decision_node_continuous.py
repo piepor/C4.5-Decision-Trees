@@ -22,11 +22,6 @@ def node_b_attributes():
     return DecisionNodeAttributes(1, "A > 10.0", NodeType.DECISION_NODE_CONTINUOUS,
             "C", AttributeType.CONTINUOUS, 10.0)
 
-def test_wrong_input_type(root_attributes):
-    root_node = DecisionNodeContinuous(root_attributes, None)
-    with pytest.raises(TypeError):
-        test_result = root_node.run_test(True)
-
 def test_dnc_below_threshold(root_attributes):
     """ running test with attribute below the threshold """
     root_node = DecisionNodeContinuous(root_attributes, None)
@@ -72,12 +67,28 @@ def test_get_child(root_attributes, node_a_attributes, node_b_attributes):
     root_node.add_child(node_b)
     assert root_node.get_child(5.0) == node_a
 
-def test_does_not_get_child(root_attributes, node_a_attributes, node_b_attributes):
-    node_b_attributes.node_name = "A <= 10.0"
+def test_adding_child(root_attributes, node_a_attributes):
+    """ add a child """
+    root_node = DecisionNodeContinuous(root_attributes, None)
+    node_a = DecisionNodeContinuous(node_a_attributes, root_node)
+    root_node.add_child(node_a)
+    assert root_node.get_childs() == set([node_a])
+
+def test_adding_childs(root_attributes, node_a_attributes, node_b_attributes):
+    """ add two childs """
     root_node = DecisionNodeContinuous(root_attributes, None)
     node_a = DecisionNodeContinuous(node_a_attributes, root_node)
     node_b = DecisionNodeContinuous(node_b_attributes, root_node)
     root_node.add_child(node_a)
     root_node.add_child(node_b)
-    with pytest.raises(RuntimeError):
-        root_node.get_child(15.0)
+    assert root_node.get_childs() == set([node_a, node_b])
+
+def test_delete_child(root_attributes, node_a_attributes, node_b_attributes):
+    """ delete a child """
+    root_node = DecisionNodeContinuous(root_attributes, None)
+    node_a = DecisionNodeContinuous(node_b_attributes, root_node)
+    node_b = DecisionNodeContinuous(node_b_attributes, root_node)
+    root_node.add_child(node_a)
+    root_node.add_child(node_b)
+    root_node.delete_child(node_a)
+    assert root_node.get_childs() == set([node_b])
