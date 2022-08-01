@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Callable
 import numpy as np
 from attributes import DecisionNodeAttributes, AttributeType, LeafNodeAttributes
+from attributes import NodeType
 from node_functions import continuous_test_fn, get_distribution
 from checking import check_attributes
 
@@ -53,6 +54,10 @@ class DecisionNodeContinuous(DecisionNode):
         self._parent_node = parent_node
         self._childs = set()
         self._attributes = attributes
+
+    def get_node_type(self) -> NodeType:
+        """ returns the type of the node """
+        return self._attributes.node_type
 
     def get_level(self) -> int:
         """ Returns the level of the node in the tree """

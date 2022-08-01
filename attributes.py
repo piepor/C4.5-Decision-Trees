@@ -2,7 +2,7 @@
 from __future__ import annotations
 from enum import Enum, auto
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
 
 
 class NodeType(Enum):
@@ -17,6 +17,14 @@ class AttributeType(Enum):
     CONTINUOUS = "continuous"
     CATEGORICAL = "categorical"
     BOOLEAN = "boolean"
+
+
+@dataclass
+class TrainingAttributes:
+    """ attributes defining the when the training stops """
+    min_instances: Optional[int] = 2
+    node_purity: Optional[float] = 0.9
+    max_depth: Optional[int] = 10
 
 
 @dataclass
@@ -49,6 +57,16 @@ class DecisionTreeAttributes:
     max_depth: int = 20
     node_purity: float = 0.9
     max_instances: int = 20
+
+@dataclass
+class SplitAttributes:
+    """ attributes of a node split """
+    gain_ratio: float
+    info_gain: float
+    at_least_two: bool
+    attr_name: Optional[str] = None
+    local_threshold: Optional[float] = None
+    attr_name: Optional[str] = None
 
 
 def from_str_to_enum(attributes_map: dict) -> dict:

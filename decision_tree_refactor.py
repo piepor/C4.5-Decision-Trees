@@ -1,8 +1,10 @@
 import pandas as pd
 from nodes import Node, LeafNode
-from attributes import DecisionTreeAttributes, NodeAttributes, NodeType
+from attributes import DecisionTreeAttributes, NodeAttributes
+from attributes import NodeType, AttributeType
 from training import create_continuous_decision_node, create_categorical_decision_node
-from training import create_leaf_node
+from training import create_leaf_node, check_split, Actions
+from training import get_split_gain_continuous, get_split_gain_categorical
 from predictor import PredictionHandler
 
 
@@ -17,7 +19,13 @@ class DecisionTree:
                 NodeType.DECISION_NODE_CATEGORICAL: create_categorical_decision_node,
                 NodeType.LEAF_NODE: create_leaf_node,
                 }
+        self._get_split_gain_fn = {
+                AttributeType.CONTINUOUS: get_split_gain_continuous,
+                AttributeType.CATEGORICAL: get_split_gain_categorical,
+                AttributeType.BOOLEAN: get_split_gain_categorical
+                }
         self.prediction_handler = None
+        self.complete_dataset = None
 
     def get_root_node(self):
         """ Returns the root node of the tree """
@@ -51,6 +59,13 @@ class DecisionTree:
         parent_node = node.get_parent_node()
         parent_node.delete_child(node)
         self._nodes.remove(node)
+
+    def convert_to_leaf(self, node, leaf_attributes):
+        """ convert a decision node to a leaf one """
+        parent_node = node.get_parent_node()
+        self.delete_node(node)
+        node = create_leaf_node(leaf_attributes, parent_node)
+        self.add_node(node)
 
     def predict(self, data_input: pd.DataFrame) -> list[str]:
         """ Returns the target predicted by the tree for every row in data_input """
