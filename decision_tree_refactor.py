@@ -27,6 +27,10 @@ class DecisionTree:
         self.prediction_handler = None
         self.complete_dataset = None
 
+    def get_attributes(self) -> dict:
+        """ returns the dictionary mapping data attributes and types """
+        return self._attributes
+
     def get_root_node(self):
         """ Returns the root node of the tree """
         return self._root_node
@@ -59,13 +63,6 @@ class DecisionTree:
         parent_node = node.get_parent_node()
         parent_node.delete_child(node)
         self._nodes.remove(node)
-
-    def convert_to_leaf(self, node, leaf_attributes):
-        """ convert a decision node to a leaf one """
-        parent_node = node.get_parent_node()
-        self.delete_node(node)
-        node = create_leaf_node(leaf_attributes, parent_node)
-        self.add_node(node)
 
     def predict(self, data_input: pd.DataFrame) -> list[str]:
         """ Returns the target predicted by the tree for every row in data_input """
