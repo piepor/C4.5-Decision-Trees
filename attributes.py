@@ -54,9 +54,9 @@ class LeafNodeAttributes(NodeAttributes):
 class DecisionTreeAttributes:
     """ decision tree attributes class """
     attributes_map: dict
-    max_depth: int = 20
-    node_purity: float = 0.9
-    max_instances: int = 20
+    max_depth: Optional[int] = 10
+    node_purity: Optional[float] = 0.9
+    min_instances: Optional[int] = 10
 
 @dataclass
 class SplitAttributes:
@@ -66,8 +66,7 @@ class SplitAttributes:
     at_least_two: bool
     attr_name: Optional[str] = None
     local_threshold: Optional[float] = None
-    attr_name: Optional[str] = None
-
+    errs_perc: Optional[float] = None
 
 def from_str_to_enum(attributes_map: dict) -> dict:
     """ convert a string into a value of type AttributeType """

@@ -1,19 +1,19 @@
 import pandas as pd
 from nodes import Node, LeafNode
-from attributes import DecisionTreeAttributes, NodeAttributes
+from attributes import DecisionTreeAttributes, NodeAttributes, from_str_to_enum
 from attributes import NodeType, AttributeType
 from training import create_continuous_decision_node, create_categorical_decision_node
-from training import create_leaf_node, check_split, Actions
-from training import get_split_gain_continuous, get_split_gain_categorical
+from training import create_leaf_node, Actions
+from splitting import check_split, get_split_gain_continuous, get_split_gain_categorical
 from predictor import PredictionHandler
 
 
 class DecisionTree:
     """ class implementing a decision tree """
-    def __init__(self, attributes: DecisionTreeAttributes):
+    def __init__(self, attributes: dict):
         self._nodes = set()
         self._root_node = None
-        self._attributes = attributes
+        self._attributes = from_str_to_enum(attributes)
         self._create_node_fns = {
                 NodeType.DECISION_NODE_CONTINUOUS: create_continuous_decision_node,
                 NodeType.DECISION_NODE_CATEGORICAL: create_categorical_decision_node,

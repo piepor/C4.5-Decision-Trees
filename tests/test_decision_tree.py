@@ -11,8 +11,8 @@ from predictor import PredictionHandler
 @pytest.fixture
 def decision_tree():
     attributes_map = {"attr1": "continuous"}
-    decision_tree_attributes = DecisionTreeAttributes(attributes_map)
-    return DecisionTree(decision_tree_attributes)
+    #decision_tree_attributes = DecisionTreeAttributes(attributes_map)
+    return DecisionTree(attributes_map)
 
 
 @pytest.fixture
@@ -60,8 +60,8 @@ def paper_tree():
     attributes_map = {
             "Outlook": "categorical", "Humidity": "continuous",
             "Windy": "boolean", "Temperature": "continuous"}
-    attributes_tree = DecisionTreeAttributes(attributes_map)
-    paper_tree = DecisionTree(attributes_tree)
+    #attributes_tree = DecisionTreeAttributes(attributes_map)
+    paper_tree = DecisionTree(attributes_map)
     root_node_attr = DecisionNodeAttributes(0, "root", NodeType.DECISION_NODE_CATEGORICAL,
             "Outlook", AttributeType.CATEGORICAL)
     sunny_node_attr = DecisionNodeAttributes(1, "Outlook = sunny",
@@ -104,8 +104,8 @@ def paper_tree_unknown():
     attributes_map = {
             "Outlook": "categorical", "Humidity": "continuous",
             "Windy": "boolean", "Temperature": "continuous"}
-    attributes_tree = DecisionTreeAttributes(attributes_map)
-    paper_tree_unknown = DecisionTree(attributes_tree)
+    #attributes_tree = DecisionTreeAttributes(attributes_map)
+    paper_tree_unknown = DecisionTree(attributes_map)
     root_node_attr = DecisionNodeAttributes(0, "root", NodeType.DECISION_NODE_CATEGORICAL,
             "Outlook", AttributeType.CATEGORICAL)
     sunny_node_attr = DecisionNodeAttributes(1, "Outlook = sunny",
