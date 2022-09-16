@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 import numpy as np
-from decision_tree_refactor import DecisionTree
+from DecisionTree import DecisionTree
 from attributes import DecisionTreeAttributes, DecisionNodeAttributes
 from attributes import NodeType, AttributeType, LeafNodeAttributes
 from nodes import DecisionNodeContinuous

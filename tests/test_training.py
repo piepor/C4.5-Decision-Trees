@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from decision_tree_refactor import DecisionTree
+from DecisionTree import DecisionTree
 from traininghandler import TrainingHandler
 from attributes import TrainingAttributes
 

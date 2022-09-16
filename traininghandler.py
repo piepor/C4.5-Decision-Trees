@@ -3,7 +3,7 @@ import numpy as np
 from attributes import AttributeType, TrainingAttributes, NodeType
 from attributes import DecisionNodeAttributes, LeafNodeAttributes, SplitAttributes
 from nodes import Node
-from decision_tree_refactor import DecisionTree
+from DecisionTree import DecisionTree
 from training import Actions, Node, get_total_threshold
 from filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
 from splitting import check_split, get_split_gain_categorical, get_split_gain_continuous

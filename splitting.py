@@ -166,7 +166,8 @@ def compute_split_error_cont(data_in: pd.DataFrame, threshold: float=None) -> in
     total_child_error = errors_left + errors_right
     return total_child_error/len(data_in)
 
-def compute_split_error_cat(data_in: pd.DataFrame, threshold: float=None) -> int:
+def compute_split_error_cat(data_in: pd.DataFrame) -> int:
+#def compute_split_error_cat(data_in: pd.DataFrame, threshold: float=None) -> int:
     """
     Computes the error made by the split if predicting
     the most frequent class for every child born after it """
