@@ -13,6 +13,7 @@ def get_split(
         min_instances: int, attr_map: dict) -> SplitAttributes:
     """ Compute the best split of the input data """
     chosen_split_attributes = SplitAttributes(None, None, False)
+    breakpoint()
     # if there is only the target column or there aren't data the split doesn't exist
     if len(data_in['target'].unique()) > 1 and len(data_in) > 0:
         # in order the split to be chosen,
@@ -32,13 +33,14 @@ def get_split(
                 tests_examined['not_near_trivial_subset'].append(split_attributes.at_least_two)
                 tests_examined['errs_perc'].append(split_attributes.errs_perc)
         # select the best split
+        breakpoint()
         tests_examined = pd.DataFrame.from_dict(tests_examined)
         mean_info_gain = tests_examined['info_gain'].mean()
         # two conditions for the split to be chosen
         gain_ratio_gt_mean = tests_examined['info_gain'] >= mean_info_gain
         not_near_trivial_subset = tests_examined['not_near_trivial_subset']
         select_max_gain_ratio = tests_examined[
-                (gain_ratio_gt_mean) & (not_near_trivial_subset)]
+                (gain_ratio_gt_mean) & (not_near_trivial_subset)].reset_index(drop=True)
         if len(select_max_gain_ratio) != 0:
             chosen_split_attributes = extract_max_gain_attributes(
                     select_max_gain_ratio, chosen_split_attributes)
@@ -143,6 +145,7 @@ def check_split(data_in: pd.DataFrame,
     node_errs_perc = data_in['target'].value_counts().sum() - data_in['target'].value_counts().max()
     node_errs_perc = node_errs_perc / len(data_in)
     child_errs_perc = split_attributes.errs_perc
+    breakpoint()
     if child_errs_perc >= node_errs_perc:
         return Actions.ADD_LEAF, None
     return Actions.SPLIT_NODE, split_attributes
@@ -151,7 +154,8 @@ def compute_split_error_cont(data_in: pd.DataFrame, threshold: float=None) -> in
     """
     Computes the error made by the split of a continuous attribute if predicting
     the most frequent class for every child born after it. data_in contains only
-    the attribute and the target columns """
+    the attribute and the target columns.
+    NEW The returned error is the minimum error between the children, otherwise """
     attr_name = [column for column in data_in.columns if column != 'target'][0]
     # if continuous type the split is binary given by th threshold
     split_left = filter_dataset_low(data_in, attr_name, threshold)
@@ -159,23 +163,32 @@ def compute_split_error_cont(data_in: pd.DataFrame, threshold: float=None) -> in
     values_count = split_left.groupby(['target'])["weight"].sum()
     # errors given by the difference between the sum of all occurrences and the most frequent
     errors_left = values_count.sum() - values_count.max()
+    # compute perc
+    errors_left_perc = errors_left / len(split_left)
     split_right = filter_dataset_high(data_in, attr_name, threshold)
     values_count = split_right.groupby(['target'])["weight"].sum()
     # errors given by the difference between the sum of all occurrences and the most frequent
     errors_right = values_count.sum() - values_count.max()
-    total_child_error = errors_left + errors_right
-    return total_child_error/len(data_in)
+    # compute perc
+    errors_right_perc = errors_right / len(split_right)
+#    total_child_error = errors_left + errors_right
+#    return total_child_error/len(data_in)
+    return min(errors_left_perc, errors_right_perc)
 
 def compute_split_error_cat(data_in: pd.DataFrame) -> int:
 #def compute_split_error_cat(data_in: pd.DataFrame, threshold: float=None) -> int:
     """
     Computes the error made by the split if predicting
-    the most frequent class for every child born after it """
+    the most frequent class for every child born after it.
+    NEW The returned error is the minimum error between the children, otherwise """
     attr_name = [column for column in data_in.columns if column != 'target'][0]
     # if continuous type the split is binary given by th threshold
-    total_child_error = 0
+    #total_child_error = 0
+    errors = []
     for attr_value in data_in[attr_name].unique():
         split = filter_dataset_cat(data_in, attr_name, attr_value)
         values_count = split.groupby(['target'])["weight"].sum()
-        total_child_error += values_count.sum() - values_count.max()
-    return total_child_error/len(data_in)
+        #total_child_error += values_count.sum() - values_count.max()
+        errors.append((values_count.sum() - values_count.max()) / len(split))
+    #return total_child_error/len(data_in)
+    return min(errors)
