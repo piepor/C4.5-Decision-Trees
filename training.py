@@ -42,6 +42,10 @@ def extract_max_gain_attributes(data: pd.DataFrame, split_attr: SplitAttributes)
     split_attr.at_least_two = data.iloc[max_idx]['not_near_trivial_subset']
     split_attr.attr_name = data.iloc[max_idx]['attribute']
     split_attr.local_threshold = data.iloc[max_idx]['threshold']
+    # check if threshold is nan
+    if split_attr.local_threshold:
+        if np.isnan(split_attr.local_threshold):
+            split_attr.local_threshold = None
     split_attr.errs_perc = data.iloc[max_idx]['errs_perc']
     return split_attr
 

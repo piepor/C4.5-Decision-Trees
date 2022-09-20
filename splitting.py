@@ -13,7 +13,6 @@ def get_split(
         min_instances: int, attr_map: dict) -> SplitAttributes:
     """ Compute the best split of the input data """
     chosen_split_attributes = SplitAttributes(None, None, False)
-    breakpoint()
     # if there is only the target column or there aren't data the split doesn't exist
     if len(data_in['target'].unique()) > 1 and len(data_in) > 0:
         # in order the split to be chosen,
@@ -33,7 +32,6 @@ def get_split(
                 tests_examined['not_near_trivial_subset'].append(split_attributes.at_least_two)
                 tests_examined['errs_perc'].append(split_attributes.errs_perc)
         # select the best split
-        breakpoint()
         tests_examined = pd.DataFrame.from_dict(tests_examined)
         mean_info_gain = tests_examined['info_gain'].mean()
         # two conditions for the split to be chosen
@@ -145,7 +143,6 @@ def check_split(data_in: pd.DataFrame,
     node_errs_perc = data_in['target'].value_counts().sum() - data_in['target'].value_counts().max()
     node_errs_perc = node_errs_perc / len(data_in)
     child_errs_perc = split_attributes.errs_perc
-    breakpoint()
     if child_errs_perc >= node_errs_perc:
         return Actions.ADD_LEAF, None
     return Actions.SPLIT_NODE, split_attributes

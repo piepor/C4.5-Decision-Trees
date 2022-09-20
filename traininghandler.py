@@ -40,6 +40,7 @@ class TrainingHandler:
         decision tree adds the nodes
         """
         # add weight for the dataset used in the training
+        #breakpoint()
         dataset = self.complete_dataset.copy(deep=True)
         dataset["weight"] = [1]*len(dataset)
         # check if the split exists, create node and recurse
@@ -70,6 +71,7 @@ class TrainingHandler:
         Recursively splits a dataset based on a continuous variable.
         decision tree adds the nodes
         """
+        #breakpoint()
         threshold = get_total_threshold(
                 self.complete_dataset[split_attribute.attr_name], split_attribute.local_threshold)
         data_low = filter_dataset_low(data_in, split_attribute.attr_name, threshold)
@@ -77,11 +79,13 @@ class TrainingHandler:
         action, split_attribute_low = check_split(data_low,
                 self.training_attributes, self.get_split_fn, self.decision_tree.get_attributes())
         node_name = f"{parent_node.get_attribute()} <= {threshold}"
+        if parent_node.get_level()+1 == self.training_attributes.max_depth:
+            action = Actions.ADD_LEAF
         if action == Actions.ADD_LEAF:
             self.leaf_node_creation(parent_node, node_name, data_low)
         else:
             node, attr_type = self.node_creation(parent_node,
-                    node_name, split_attribute)
+                    node_name, split_attribute_low)
             self.split_fn[attr_type](node, data_low, split_attribute_low)
 
         # Higher than the threshold
@@ -90,11 +94,13 @@ class TrainingHandler:
         action, split_attribute_high = check_split(data_high,
                 self.training_attributes, self.get_split_fn, self.decision_tree.get_attributes())
         node_name = f"{parent_node.get_attribute()} > {threshold}"
+        if parent_node.get_level()+1 == self.training_attributes.max_depth:
+            action = Actions.ADD_LEAF
         if action == Actions.ADD_LEAF:
             self.leaf_node_creation(parent_node, node_name, data_high)
         else:
             node, attr_type = self.node_creation(parent_node,
-                    node_name, split_attribute)
+                    node_name, split_attribute_high)
             self.split_fn[attr_type](node, data_high, split_attribute_high)
 
     def split_categorical(self,
@@ -111,11 +117,13 @@ class TrainingHandler:
                     self.training_attributes, self.get_split_fn,
                     self.decision_tree.get_attributes())
             node_name = f"{split_attribute.attr_name} = {attr_value}"
+            if parent_node.get_level()+1 == self.training_attributes.max_depth:
+                action = Actions.ADD_LEAF
             if action == Actions.ADD_LEAF:
                 self.leaf_node_creation(parent_node, node_name, data)
             else:
                 node, attr_type = self.node_creation(parent_node,
-                        node_name, split_attribute)
+                        node_name, split_attribute_child)
                 self.split_fn[attr_type](node, data, split_attribute_child)
 
     def node_creation(self,
