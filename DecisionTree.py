@@ -6,6 +6,7 @@ from training import create_continuous_decision_node, create_categorical_decisio
 from training import create_leaf_node, Actions
 from splitting import check_split, get_split_gain_continuous, get_split_gain_categorical
 from predictor import PredictionHandler
+from exceptions import LeafNotFound
 
 
 class DecisionTree:
@@ -39,9 +40,15 @@ class DecisionTree:
         """ Returns nodes added in the tree """
         return self._nodes
 
-    def get_leaves_nodes(self) -> list[Node]:
+    def get_leaves_nodes(self) -> set[Node]:
         """ Returns a list of the leaves nodes """
         return {node for node in self._nodes if isinstance(node, LeafNode)}
+
+    def get_leaf_node(self, leaf_label: str) -> list[Node]:
+        """ Returns the leaf node with the desired label """
+        if leaf_label not in {node.get_label() for node in self.get_leaves_nodes()}:
+            raise LeafNotFound("No leaf labeled 'leaf_label' found in the tree")
+        return [node for node in self.get_leaves_nodes() if node.get_label() == leaf_label]
 
     def create_node(self, node_attributes: NodeAttributes, parent_node: Node) -> Node:
         """ create a new node """
