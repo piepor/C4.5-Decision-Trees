@@ -14,10 +14,10 @@ class TrainingHandler:
     """ Class responsible to handle the training of the decision tree """
     def __init__(self,
             decision_tree: DecisionTree,
-            complete_dataset: pd.DataFrame,
+            #complete_dataset: pd.DataFrame,
             training_attributes: TrainingAttributes):
         self.decision_tree = decision_tree
-        self.complete_dataset = complete_dataset
+        self.complete_dataset = None
         self.training_attributes = training_attributes
         self.get_split_fn = {
                 AttributeType.CONTINUOUS: get_split_gain_continuous,
@@ -35,15 +35,16 @@ class TrainingHandler:
                 AttributeType.BOOLEAN: NodeType.DECISION_NODE_CATEGORICAL
                 }
 
-    def split_dataset(self):
+    def split_dataset(self, dataset: pd.DataFrame):
         """
         Recursively splits a dataset until some conditions are met.
         decision tree adds the nodes
         """
         # add weight for the dataset used in the training
         #breakpoint()
-        dataset = self.complete_dataset.copy(deep=True)
-        dataset["weight"] = [1]*len(dataset)
+        self.complete_dataset = dataset.copy(deep=True)
+        #dataset["weight"] = [1]*len(dataset)
+        dataset.insert(len(dataset.columns) ,"weight", [1]*len(dataset))
         # check if the split exists, create node and recurse
         action, split_attribute = check_split(
                 dataset, self.training_attributes,

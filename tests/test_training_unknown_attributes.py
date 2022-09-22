@@ -31,8 +31,8 @@ def test_sunny_weight(paper_dataset, paper_attributes_map):
     decision_tree = DecisionTree(paper_attributes_map)
     training_attributes = TrainingAttributes(max_depth=1)
     training_handler = TrainingHandler(decision_tree,
-            paper_dataset, training_attributes)
-    training_handler.split_dataset()
+            training_attributes)
+    training_handler.split_dataset(paper_dataset)
     expected_distribution = {
             "Play": np.round(2+5/13, 4),
             "Don't Play": 3}
