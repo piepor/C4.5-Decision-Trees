@@ -3,6 +3,7 @@ Implementation of the Quinlan's algorithm to train a decision tree and make infe
 
 # Usage
 To train a decision tree classifier, import the class DecisionTreeClassifier and call the .fit() method.
+The training dataset must be a pandas DataFrame with a column named *target* to identify the target classes of the classification.
 ```python
 import pandas as pd
 from c4dot5.DecisionTreeClassifier import DecisionTreeClassifier
