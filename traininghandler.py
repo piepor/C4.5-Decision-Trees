@@ -40,16 +40,13 @@ class TrainingHandler:
         Recursively splits a dataset until some conditions are met.
         decision tree adds the nodes
         """
-        # add weight for the dataset used in the training
-        #breakpoint()
         self.complete_dataset = dataset.copy(deep=True)
-        #dataset["weight"] = [1]*len(dataset)
+        # add weight for the dataset used in the training
         dataset.insert(len(dataset.columns) ,"weight", [1]*len(dataset))
         # check if the split exists, create node and recurse
         action, split_attribute = check_split(
                 dataset, self.training_attributes,
                 self.get_split_fn, self.decision_tree.get_attributes())
-        #breakpoint()
         # if split attribute does not exist then is a leaf
         if action == Actions.ADD_LEAF:
             raise SplitError(
