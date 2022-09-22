@@ -35,9 +35,6 @@ def test_continuous_split():
         })
     decision_tree = DecisionTree(attr_map)
     training_attributes = TrainingAttributes()
-#    decision_handler = TrainingHandler(decision_tree,
-#            dataset, training_attributes)
-    #decision_handler.split_dataset()
     training_handler = TrainingHandler(
             decision_tree, training_attributes)
     training_handler.split_dataset(dataset)
@@ -51,9 +48,6 @@ def test_categorical_split(paper_dataset, paper_attributes_map):
     dataset = paper_dataset[["Outlook", "target"]]
     decision_tree = DecisionTree(paper_attributes_map)
     training_attributes = TrainingAttributes()
-#    decision_handler = TrainingHandler(decision_tree,
-#            dataset, training_attributes)
-#    decision_handler.split_dataset()
     training_handler = TrainingHandler(decision_tree,
             training_attributes)
     training_handler.split_dataset(dataset)
@@ -67,9 +61,6 @@ def test_categorical_split(paper_dataset, paper_attributes_map):
 def test_paper_training(paper_dataset, paper_attributes_map):
     decision_tree = DecisionTree(paper_attributes_map)
     training_attributes = TrainingAttributes()
-#    decision_handler = TrainingHandler(decision_tree,
-#            dataset, training_attributes)
-#    decision_handler.split_dataset()
     training_handler = TrainingHandler(decision_tree,
             training_attributes)
     training_handler.split_dataset(paper_dataset)
@@ -83,9 +74,6 @@ def test_paper_training(paper_dataset, paper_attributes_map):
 def test_stop_split_level(paper_dataset, paper_attributes_map):
     decision_tree = DecisionTree(paper_attributes_map)
     training_attributes = TrainingAttributes(max_depth=1)
-#    decision_handler = TrainingHandler(decision_tree,
-#            dataset, training_attributes)
-#    decision_handler.split_dataset()
     training_handler = TrainingHandler(decision_tree,
             training_attributes)
     training_handler.split_dataset(paper_dataset)

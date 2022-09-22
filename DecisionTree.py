@@ -65,7 +65,7 @@ class DecisionTree:
         parent_node = node.get_parent_node()
         parent_node.add_child(node)
 
-    def delete_node(self, node):
+    def delete_node(self, node: Node):
         """ Removes a node from the tree's set of nodes and disconnects it from its parent node """
         parent_node = node.get_parent_node()
         parent_node.delete_child(node)
