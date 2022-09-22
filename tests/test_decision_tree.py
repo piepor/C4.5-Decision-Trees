@@ -6,6 +6,7 @@ from attributes import DecisionTreeAttributes, DecisionNodeAttributes
 from attributes import NodeType, AttributeType, LeafNodeAttributes
 from nodes import DecisionNodeContinuous
 from predictor import PredictionHandler
+from exceptions import LeafNotFound
 
 
 @pytest.fixture
@@ -175,6 +176,28 @@ def test_get_leaves_nodes(decision_tree, root_attributes, node_a_attributes_leav
     decision_tree.add_node(node_b)
     leaves = decision_tree.get_leaves_nodes()
     assert leaves == {node_a, node_b}
+
+def test_get_leaf_node(decision_tree, root_attributes, node_a_attributes_leave, node_b_attributes_leave):
+    root_node = decision_tree.create_node(root_attributes, None)
+    decision_tree.add_root_node(root_node)
+    node_a = decision_tree.create_node(node_a_attributes_leave, root_node)
+    decision_tree.add_node(node_a)
+    node_b = decision_tree.create_node(node_b_attributes_leave, root_node)
+    decision_tree.add_node(node_b)
+    expected_label = "attr1 <= 10.0"
+    leaf_node = decision_tree.get_leaf_node(expected_label)[0]
+    assert leaf_node.get_label() == expected_label
+
+def test_get_leaf_node_wrong_label(decision_tree, root_attributes, node_a_attributes_leave, node_b_attributes_leave):
+    root_node = decision_tree.create_node(root_attributes, None)
+    decision_tree.add_root_node(root_node)
+    node_a = decision_tree.create_node(node_a_attributes_leave, root_node)
+    decision_tree.add_node(node_a)
+    node_b = decision_tree.create_node(node_b_attributes_leave, root_node)
+    decision_tree.add_node(node_b)
+    expected_label = "attr1 < 10.0"
+    with pytest.raises(LeafNotFound):
+        decision_tree.get_leaf_node(expected_label)[0]
 
 def test_predictions_distribution(decision_tree, root_attributes, node_a_attributes_leave, node_b_attributes_leave):
     root_node = decision_tree.create_node(root_attributes, None)

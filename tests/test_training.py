@@ -3,6 +3,7 @@ import pandas as pd
 from DecisionTree import DecisionTree
 from traininghandler import TrainingHandler
 from attributes import TrainingAttributes
+from exceptions import SplitError
 
 
 @pytest.fixture
@@ -92,3 +93,11 @@ def test_stop_split_min_instances(paper_dataset, paper_attributes_map):
     expected_leaves_labels = {"Outlook = sunny", "Outlook = overcast", "Outlook = rain"}
     leaves_labels = {leaf.get_label() for leaf in decision_tree.get_leaves_nodes()}
     assert leaves_labels == expected_leaves_labels
+
+def test_stop_split_purity(paper_dataset, paper_attributes_map):
+    decision_tree = DecisionTree(paper_attributes_map)
+    training_attributes = TrainingAttributes(node_purity=0.6)
+    decision_handler = TrainingHandler(decision_tree,
+            paper_dataset, training_attributes)
+    with pytest.raises(SplitError):
+        decision_handler.split_dataset()
