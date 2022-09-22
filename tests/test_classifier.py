@@ -1,8 +1,7 @@
 import pytest
 import numpy as np
 import pandas as pd
-from DecisionTreeClassifier import DecisionTreeClassifier
-from exceptions import SplitError
+from c4dot5.DecisionTreeClassifier import DecisionTreeClassifier
 
 
 @pytest.fixture

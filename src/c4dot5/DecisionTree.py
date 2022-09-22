@@ -1,12 +1,11 @@
 import pandas as pd
-from nodes import Node, LeafNode
-from attributes import DecisionTreeAttributes, NodeAttributes, from_str_to_enum
-from attributes import NodeType, AttributeType
-from training import create_continuous_decision_node, create_categorical_decision_node
-from training import create_leaf_node, Actions
-from splitting import check_split, get_split_gain_continuous, get_split_gain_categorical
-from predictor import PredictionHandler
-from exceptions import LeafNotFound
+from c4dot5.nodes import Node, LeafNode
+from c4dot5.attributes import NodeAttributes, from_str_to_enum
+from c4dot5.attributes import NodeType, AttributeType
+from c4dot5.training import create_continuous_decision_node, create_categorical_decision_node
+from c4dot5.training import create_leaf_node
+from c4dot5.splitting import get_split_gain_continuous, get_split_gain_categorical
+from c4dot5.exceptions import LeafNotFound
 
 
 class DecisionTree:

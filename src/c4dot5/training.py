@@ -3,11 +3,9 @@
 from enum import Enum, auto
 import pandas as pd
 import numpy as np
-from nodes import DecisionNodeCategorical
-from nodes import DecisionNodeContinuous, LeafNode, Node
-from attributes import NodeAttributes, SplitAttributes
-from attributes import NodeType, TrainingAttributes
-from attributes import from_str_to_enum
+from c4dot5.nodes import DecisionNodeCategorical
+from c4dot5.nodes import DecisionNodeContinuous, LeafNode, Node
+from c4dot5.attributes import NodeAttributes, SplitAttributes
 
 
 class Actions(Enum):

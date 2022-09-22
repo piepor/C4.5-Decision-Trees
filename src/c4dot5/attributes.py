@@ -2,7 +2,7 @@
 from __future__ import annotations
 from enum import Enum, auto
 from dataclasses import dataclass
-from typing import Callable, Optional
+from typing import Optional
 
 
 class NodeType(Enum):

@@ -1,13 +1,12 @@
 import pandas as pd
-import numpy as np
-from attributes import AttributeType, TrainingAttributes, NodeType
-from attributes import DecisionNodeAttributes, LeafNodeAttributes, SplitAttributes
-from nodes import Node
-from DecisionTree import DecisionTree
-from training import Actions, Node, get_total_threshold
-from filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
-from splitting import check_split, get_split_gain_categorical, get_split_gain_continuous
-from exceptions import SplitError
+from c4dot5.attributes import AttributeType, TrainingAttributes, NodeType
+from c4dot5.attributes import DecisionNodeAttributes, LeafNodeAttributes, SplitAttributes
+from c4dot5.nodes import Node
+from c4dot5.DecisionTree import DecisionTree
+from c4dot5.training import Actions, get_total_threshold
+from c4dot5.filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
+from c4dot5.splitting import check_split, get_split_gain_categorical, get_split_gain_continuous
+from c4dot5.exceptions import SplitError
 
 
 class TrainingHandler:

@@ -1,8 +1,8 @@
 import copy
 import pandas as pd
-from predicting import create_predictions_dict, select_children_for_prediction
-from nodes import Node, LeafNode
-from predicting import get_predictions_distribution
+from c4dot5.predicting import create_predictions_dict, select_children_for_prediction
+from c4dot5.predicting import get_predictions_distribution
+from c4dot5.nodes import Node, LeafNode
 
 
 class PredictionHandler:

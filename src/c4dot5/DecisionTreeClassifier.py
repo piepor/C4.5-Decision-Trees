@@ -1,8 +1,8 @@
 import pandas as pd
-from DecisionTree import DecisionTree
-from traininghandler import TrainingHandler
-from attributes import TrainingAttributes
-from nodes import Node
+from c4dot5.DecisionTree import DecisionTree
+from c4dot5.traininghandler import TrainingHandler
+from c4dot5.attributes import TrainingAttributes
+from c4dot5.nodes import Node
 
 
 class DecisionTreeClassifier:
@@ -48,4 +48,4 @@ class DecisionTreeClassifier:
 
     def predict(self, data_input: pd.DataFrame) -> list[str]:
         """ Returns the target predicted by the tree for every row in data_input """
-        return self.decision_tree.predict(data_input, self.get_root_node())
+        return self.decision_tree.predict(data_input)

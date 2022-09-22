@@ -2,10 +2,10 @@
 
 import pandas as pd
 import numpy as np
-from attributes import SplitAttributes, TrainingAttributes
-from training import extract_max_gain_attributes, class_entropy, Actions
-from training import are_there_at_least_two, compute_local_threshold_gain
-from filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
+from c4dot5.attributes import SplitAttributes, TrainingAttributes
+from c4dot5.training import extract_max_gain_attributes, class_entropy, Actions
+from c4dot5.training import are_there_at_least_two, compute_local_threshold_gain
+from c4dot5.filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
 
 
 def get_split(

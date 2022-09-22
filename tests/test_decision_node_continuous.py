@@ -1,6 +1,6 @@
-from nodes import DecisionNodeContinuous
-from attributes import DecisionNodeAttributes, AttributeType, NodeType
 import pytest
+from c4dot5.nodes import DecisionNodeContinuous
+from c4dot5.attributes import DecisionNodeAttributes, AttributeType, NodeType
 
 @pytest.fixture
 def root_attributes():

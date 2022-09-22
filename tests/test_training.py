@@ -1,9 +1,9 @@
 import pytest
 import pandas as pd
-from DecisionTree import DecisionTree
-from traininghandler import TrainingHandler
-from attributes import TrainingAttributes
-from exceptions import SplitError
+from c4dot5.DecisionTree import DecisionTree
+from c4dot5.traininghandler import TrainingHandler
+from c4dot5.attributes import TrainingAttributes
+from c4dot5.exceptions import SplitError
 
 
 @pytest.fixture

@@ -1,12 +1,12 @@
 import pandas as pd
 import pytest
 import numpy as np
-from DecisionTree import DecisionTree
-from attributes import DecisionTreeAttributes, DecisionNodeAttributes
-from attributes import NodeType, AttributeType, LeafNodeAttributes
-from nodes import DecisionNodeContinuous
-from predictor import PredictionHandler
-from exceptions import LeafNotFound
+from c4dot5.DecisionTree import DecisionTree
+from c4dot5.attributes import DecisionTreeAttributes, DecisionNodeAttributes
+from c4dot5.attributes import NodeType, AttributeType, LeafNodeAttributes
+from c4dot5.nodes import DecisionNodeContinuous
+from c4dot5.predictor import PredictionHandler
+from c4dot5.exceptions import LeafNotFound
 
 
 @pytest.fixture

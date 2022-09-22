@@ -1,8 +1,9 @@
 import pytest
 import numpy as np
-from nodes import LeafNode, DecisionNodeContinuous
-from attributes import LeafNodeAttributes, AttributeType, DecisionNodeAttributes, NodeType
-from node_functions import get_distribution
+from c4dot5.nodes import LeafNode, DecisionNodeContinuous
+from c4dot5.attributes import LeafNodeAttributes, AttributeType
+from c4dot5.attributes import DecisionNodeAttributes, NodeType
+from c4dot5.node_utils import get_distribution
 
 @pytest.fixture
 def root_node():

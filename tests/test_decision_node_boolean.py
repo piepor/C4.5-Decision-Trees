@@ -1,6 +1,6 @@
 import pytest
-from attributes import AttributeType, DecisionNodeAttributes, NodeType
-from nodes import DecisionNodeCategorical
+from c4dot5.attributes import AttributeType, DecisionNodeAttributes, NodeType
+from c4dot5.nodes import DecisionNodeCategorical
 
 @pytest.fixture
 def root_attributes():

@@ -1,12 +1,10 @@
 """ Classes for different types of nodes """
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Callable
 import numpy as np
-from attributes import DecisionNodeAttributes, AttributeType, LeafNodeAttributes
-from attributes import NodeType
-from node_functions import continuous_test_fn, get_distribution
-from checking import check_attributes
+from c4dot5.attributes import DecisionNodeAttributes, LeafNodeAttributes, NodeType
+from c4dot5.node_utils import continuous_test_fn, get_distribution
+from c4dot5.checking import check_attributes
 
 
 class Node(ABC):
@@ -109,7 +107,7 @@ class DecisionNodeContinuous(DecisionNode):
 class DecisionNodeCategorical(DecisionNode):
     """ Decision node splitting data on categorical attribute """
     def __init__(self, attributes: DecisionNodeAttributes, parent_node: Node):
-        #check_attributes(attributes, parent_node)
+        check_attributes(attributes, parent_node)
         self._parent_node = parent_node
         self._children = set()
         self._attributes = attributes

@@ -1,7 +1,7 @@
 """ functions for the prediction phase """
 from copy import deepcopy
 import numpy as np
-from nodes import Node
+from c4dot5.nodes import Node
 
 def select_children_for_prediction(attr_value: str | bool | float, node: Node) -> list[Node]:
     """ returns childs based on attribute known or unknown """
