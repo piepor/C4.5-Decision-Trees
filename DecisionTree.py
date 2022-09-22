@@ -47,7 +47,7 @@ class DecisionTree:
     def get_leaf_node(self, leaf_label: str) -> list[Node]:
         """ Returns the leaf node with the desired label """
         if leaf_label not in {node.get_label() for node in self.get_leaves_nodes()}:
-            raise LeafNotFound("No leaf labeled 'leaf_label' found in the tree")
+            raise LeafNotFound(f"No leaf labeled '{leaf_label}' found in the tree")
         return [node for node in self.get_leaves_nodes() if node.get_label() == leaf_label]
 
     def create_node(self, node_attributes: NodeAttributes, parent_node: Node) -> Node:
