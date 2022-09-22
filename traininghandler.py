@@ -7,6 +7,7 @@ from DecisionTree import DecisionTree
 from training import Actions, Node, get_total_threshold
 from filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
 from splitting import check_split, get_split_gain_categorical, get_split_gain_continuous
+from exceptions import SplitError
 
 
 class TrainingHandler:
@@ -50,7 +51,11 @@ class TrainingHandler:
         #breakpoint()
         # if split attribute does not exist then is a leaf
         if action == Actions.ADD_LEAF:
-            raise Exception("something")
+            raise SplitError(
+                f"Not able to split the root node. Attributes:\n \
+                Purity: {self.training_attributes.node_purity}\n \
+                Minimum instances per node: {self.training_attributes.min_instances}\n \
+                Maximum depth: {self.training_attributes.max_depth}")
         attr_name = split_attribute.attr_name
         attr_type = self.decision_tree.get_attributes()[attr_name]
         node_type = self.attr_type_to_decision_node[attr_type]
@@ -142,6 +147,7 @@ class TrainingHandler:
 
     def leaf_node_creation(self, parent_node: Node, node_name: str, data_leaf: pd.DataFrame):
         """ create a leaf node corresponding to split attribute """
+        data_leaf = data_leaf.round({'weight': 4})
         leaf_attr = LeafNodeAttributes(
                 parent_node.get_level()+1, node_name, NodeType.LEAF_NODE,
                 data_leaf.groupby("target")["weight"].sum().to_dict())
