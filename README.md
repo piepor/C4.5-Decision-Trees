@@ -1,6 +1,11 @@
 # C4.5 Decision Tree
 Implementation of the Quinlan's algorithm to train a decision tree and make inference.
 
+# Installation
+```
+pip install -i https://test.pypi.org/simple/ c4dot5-decision-tree
+```
+
 # Usage
 To train a decision tree classifier, import the class DecisionTreeClassifier and call the .fit() method.
 The training dataset must be a pandas DataFrame with a column named *target* to identify the target classes of the classification.
