@@ -13,7 +13,10 @@ The training dataset must be a pandas DataFrame with a column named *target* to 
 import pandas as pd
 from c4dot5.DecisionTreeClassifier import DecisionTreeClassifier
 
-training_dataset = pd.read_csv(https://raw.githubusercontent.com/piepor/C4.5-Decision-Trees/main/src/data_example/training_dataset.csv)
+training_dataset = pd.read_csv("https://raw.githubusercontent.com/piepor/C4.5-Decision-Trees/main/src/data_example/training_dataset.csv")
+attributes_map = {
+  "Outlook": "categorical", "Humidity": "continuous",
+  "Windy": "boolean", "Temperature": "continuous"}
 
 decision_tree = DecisionTreeClassifier(attributes_map)
 decision_tree.fit(training_dataset)
