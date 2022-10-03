@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
 import pandas as pd
+from sklearn import metrics
 from c4dot5.DecisionTreeClassifier import DecisionTreeClassifier
 
 
@@ -57,3 +58,9 @@ def test_sunny_weight(paper_dataset_unknown, paper_attributes_map):
     sunny_leaf = decision_tree.get_leaf_node("Outlook = sunny")[0]
     sunny_leaf_distribution = sunny_leaf.get_classes()
     assert sunny_leaf_distribution == expected_distribution
+
+def test_predict(paper_dataset, paper_attributes_map):
+    decision_tree = DecisionTreeClassifier(paper_attributes_map)
+    decision_tree.fit(paper_dataset)
+    predctions = decision_tree.predict(paper_dataset)
+    assert metrics.accuracy_score(paper_dataset['target'], predctions) == 1.0
