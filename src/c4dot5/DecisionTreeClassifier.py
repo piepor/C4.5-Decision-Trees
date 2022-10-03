@@ -1,8 +1,10 @@
 import pandas as pd
+from typing import Union
 from c4dot5.DecisionTree import DecisionTree
 from c4dot5.traininghandler import TrainingHandler
 from c4dot5.attributes import TrainingAttributes
 from c4dot5.nodes import Node
+from c4dot5.predictor import PredictionHandler
 
 
 class DecisionTreeClassifier:
@@ -25,6 +27,8 @@ class DecisionTreeClassifier:
     def fit(self, dataset: pd.DataFrame):
         """ fit the input dataset """
         self.training_handler.split_dataset(dataset)
+        self.decision_tree.set_prediction_handler(
+                PredictionHandler(self.decision_tree.get_leaves_nodes()))
 
     def get_attributes(self) -> dict:
         """ returns the dictionary mapping data attributes and types """
@@ -46,6 +50,9 @@ class DecisionTreeClassifier:
         """ Returns the leaf node with the desired label """
         return self.decision_tree.get_leaf_node(leaf_label)
 
-    def predict(self, data_input: pd.DataFrame) -> list[str]:
+    def predict(self, data_input: pd.DataFrame, distribution=False) -> Union[list[str], tuple[list[str], list[dict]]]:
         """ Returns the target predicted by the tree for every row in data_input """
-        return self.decision_tree.predict(data_input)
+        predictions, predictions_distribution = self.decision_tree.predict(data_input)
+        if distribution:
+            return predictions, predictions_distribution
+        return predictions

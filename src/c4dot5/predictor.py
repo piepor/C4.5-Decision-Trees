@@ -25,7 +25,7 @@ class PredictionHandler:
             else:
                 self._predict(row_input, child)
 
-    def predict(self, data_input: pd.DataFrame, root_node: Node) -> list[str]:
+    def predict(self, data_input: pd.DataFrame, root_node: Node) -> tuple[list[str], list[dict]]:
         """ Returns the target predicted by the tree for every row in data_input """
         data_input = data_input.fillna('?')
         preds = []

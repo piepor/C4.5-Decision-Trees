@@ -67,6 +67,7 @@ class SplitAttributes:
     attr_name: Optional[str] = None
     local_threshold: Optional[float] = None
     errs_perc: Optional[float] = None
+    threshold: Optional[float] = None
 
 def from_str_to_enum(attributes_map: dict) -> dict:
     """ convert a string into a value of type AttributeType """

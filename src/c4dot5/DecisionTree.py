@@ -6,6 +6,7 @@ from c4dot5.training import create_continuous_decision_node, create_categorical_
 from c4dot5.training import create_leaf_node
 from c4dot5.splitting import get_split_gain_continuous, get_split_gain_categorical
 from c4dot5.exceptions import LeafNotFound
+from c4dot5.predictor import PredictionHandler
 
 
 class DecisionTree:
@@ -31,11 +32,11 @@ class DecisionTree:
         """ returns the dictionary mapping data attributes and types """
         return self._attributes
 
-    def get_root_node(self):
+    def get_root_node(self) -> Node:
         """ Returns the root node of the tree """
         return self._root_node
 
-    def get_nodes(self):
+    def get_nodes(self) -> list[Node]:
         """ Returns nodes added in the tree """
         return self._nodes
 
@@ -70,6 +71,9 @@ class DecisionTree:
         parent_node.delete_child(node)
         self._nodes.remove(node)
 
-    def predict(self, data_input: pd.DataFrame) -> list[str]:
+    def predict(self, data_input: pd.DataFrame) -> tuple[list[str], list[dict]]:
         """ Returns the target predicted by the tree for every row in data_input """
         return self.prediction_handler.predict(data_input, self.get_root_node())
+
+    def set_prediction_handler(self, prediciton_handler: PredictionHandler):
+        self.prediction_handler = prediciton_handler

@@ -75,7 +75,6 @@ class TrainingHandler:
         Recursively splits a dataset based on a continuous variable.
         decision tree adds the nodes
         """
-        #breakpoint()
         threshold = get_total_threshold(
                 self.complete_dataset[split_attribute.attr_name], split_attribute.local_threshold)
         data_low = filter_dataset_low(data_in, split_attribute.attr_name, threshold)
@@ -88,6 +87,7 @@ class TrainingHandler:
         if action == Actions.ADD_LEAF:
             self.leaf_node_creation(parent_node, node_name, data_low)
         else:
+            split_attribute_low.threshold = threshold
             node, attr_type = self.node_creation(parent_node,
                     node_name, split_attribute_low)
             self.split_fn[attr_type](node, data_low, split_attribute_low)
@@ -103,6 +103,7 @@ class TrainingHandler:
         if action == Actions.ADD_LEAF:
             self.leaf_node_creation(parent_node, node_name, data_high)
         else:
+            split_attribute_high.threshold = threshold
             node, attr_type = self.node_creation(parent_node,
                     node_name, split_attribute_high)
             self.split_fn[attr_type](node, data_high, split_attribute_high)
@@ -120,12 +121,18 @@ class TrainingHandler:
             action, split_attribute_child = check_split(data,
                     self.training_attributes, self.get_split_fn,
                     self.decision_tree.get_attributes())
+            # change the local threshold to total if exists
             node_name = f"{split_attribute.attr_name} = {attr_value}"
             if parent_node.get_level()+1 == self.training_attributes.max_depth:
                 action = Actions.ADD_LEAF
             if action == Actions.ADD_LEAF:
                 self.leaf_node_creation(parent_node, node_name, data)
             else:
+                if split_attribute_child.local_threshold:
+                    threshold = get_total_threshold(
+                            self.complete_dataset[split_attribute_child.attr_name],
+                            split_attribute_child.local_threshold)
+                    split_attribute_child.threshold = threshold
                 node, attr_type = self.node_creation(parent_node,
                         node_name, split_attribute_child)
                 self.split_fn[attr_type](node, data, split_attribute_child)
@@ -139,7 +146,7 @@ class TrainingHandler:
         node_type = self.attr_type_to_decision_node[attr_type]
         node_attr = DecisionNodeAttributes(
                 parent_node.get_level()+1, node_name, node_type, split_attribute.attr_name,
-                attr_type, split_attribute.local_threshold)
+                attr_type, split_attribute.threshold)
         node = self.decision_tree.create_node(node_attr, parent_node)
         self.decision_tree.add_node(node)
         return node, attr_type

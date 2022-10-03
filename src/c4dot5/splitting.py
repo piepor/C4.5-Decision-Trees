@@ -125,6 +125,7 @@ def get_split_gain_continuous(data_in: pd.DataFrame, min_instances: int) -> Spli
             split_attributes.info_gain = np.round(split_gain_threshold, 4)
             split_attributes.at_least_two = at_least_two
             split_attributes.local_threshold = threshold
+            split_attributes.threshold = threshold
             split_attributes.attr_name = attr_name
             split_attributes.errs_perc = np.round(compute_split_error_cont(data_in, threshold), 4)
     return split_attributes
