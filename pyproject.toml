@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "c4dot5-decision-tree"
-version = "1.0.0"
+version = "1.0.1"
 description = "Train a decision tree using the C4.5 algorithm by Quinlan"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -26,21 +26,3 @@ dev = ["pip-tools", "pytest"]
 
 #[project.urls]
 #Homepage = "https://github.com/piepor/reader"
-
-[tool.bumpver]
-current_version = "1.0.0"
-version_pattern = "MAJOR.MINOR.PATCH"
-commit_message = "bump version {old_version} -> {new_version}"
-commit = true
-tag = true
-push = false
-
-[tool.bumpver.file_patterns]
-"pyproject.toml" = [
-    'current_version = "{version}"',
-]
-"README.md" = [
-    "{version}",
-    "{pep440_version}",
-]
-
