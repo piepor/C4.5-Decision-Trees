@@ -38,3 +38,17 @@ def test_sunny_weight(paper_dataset, paper_attributes_map):
     sunny_leaf = decision_tree.get_leaf_node("Outlook = sunny")[0]
     sunny_leaf_distribution = sunny_leaf.get_classes()
     assert sunny_leaf_distribution == expected_distribution
+
+def test_nan(paper_dataset, paper_attributes_map):
+    decision_tree = DecisionTree(paper_attributes_map)
+    training_attributes = TrainingAttributes(max_depth=1)
+    training_handler = TrainingHandler(decision_tree,
+            training_attributes)
+    paper_dataset.at[5, 'Outlook'] = np.nan
+    training_handler.split_dataset(paper_dataset)
+    expected_distribution = {
+            "Play": np.round(2+5/13, 4),
+            "Don't Play": 3}
+    sunny_leaf = decision_tree.get_leaf_node("Outlook = sunny")[0]
+    sunny_leaf_distribution = sunny_leaf.get_classes()
+    assert sunny_leaf_distribution == expected_distribution

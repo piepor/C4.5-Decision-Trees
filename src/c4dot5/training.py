@@ -72,3 +72,6 @@ def get_total_threshold(data, local_threshold) -> float:
     """
     data = data[data != '?'].astype(float)
     return data[data.le(local_threshold)].max()
+
+def substitute_nan(dataset: pd.DataFrame) -> pd.DataFrame:
+    return dataset.fillna('?')

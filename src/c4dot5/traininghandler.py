@@ -3,7 +3,7 @@ from c4dot5.attributes import AttributeType, TrainingAttributes, NodeType
 from c4dot5.attributes import DecisionNodeAttributes, LeafNodeAttributes, SplitAttributes
 from c4dot5.nodes import Node
 from c4dot5.DecisionTree import DecisionTree
-from c4dot5.training import Actions, get_total_threshold
+from c4dot5.training import Actions, get_total_threshold, substitute_nan
 from c4dot5.filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
 from c4dot5.splitting import check_split, get_split_gain_categorical, get_split_gain_continuous
 from c4dot5.exceptions import SplitError
@@ -39,7 +39,9 @@ class TrainingHandler:
         Recursively splits a dataset until some conditions are met.
         decision tree adds the nodes
         """
-        self.complete_dataset = dataset.copy(deep=True)
+        # substitute nan in dataframe with '?'
+        dataset = substitute_nan(dataset.copy(deep=True))
+        self.complete_dataset = dataset 
         # add weight for the dataset used in the training
         dataset.insert(len(dataset.columns) ,"weight", [1]*len(dataset))
         # check if the split exists, create node and recurse
