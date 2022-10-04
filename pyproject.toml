@@ -1,23 +1,20 @@
 [build-system]
-requires      = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "c4dot5-decision-tree"
-version = "1.0.2"
+version = "1.1.0"
 description = "Train a decision tree using the C4.5 algorithm by Quinlan"
 readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = [
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
 ]
 keywords = ["decision-tree", "machine-learning", "C4.5"]
-dependencies = [
-    "numpy",
-    "pandas",
-]
+dependencies = ["numpy", "pandas", "graphviz", "scikit-learn"]
 
 requires-python = ">=3.9"
 
