@@ -16,10 +16,14 @@ class PredictionHandler:
             self._predictions_dict[target] = []
 
     def _predict(self, row_input: pd.Series, node: Node):
+        if node is None:
+            breakpoint()
         attribute = node.get_attribute().split(":")[0]
         # in case of unknown variable more the data are passed to all children
         childs = select_children_for_prediction(row_input[attribute], node)
         for child in childs:
+            if child is None:
+                breakpoint()
             if isinstance(child, LeafNode):
                 self._predictions_dict[child.get_label()] = child.get_classes()
             else:

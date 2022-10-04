@@ -53,6 +53,9 @@ class DecisionNodeContinuous(DecisionNode):
         self._childs = set()
         self._attributes = attributes
 
+    def set_threshold(self, threshold: float):
+        self._attributes.threshold = threshold
+
     def get_node_type(self) -> NodeType:
         """ returns the type of the node """
         return self._attributes.node_type

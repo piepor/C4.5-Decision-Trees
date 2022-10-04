@@ -77,6 +77,8 @@ class TrainingHandler:
         """
         threshold = get_total_threshold(
                 self.complete_dataset[split_attribute.attr_name], split_attribute.local_threshold)
+        # change the local threshold of the parent with the total one
+        parent_node.set_threshold(threshold)
         data_low = filter_dataset_low(data_in, split_attribute.attr_name, threshold)
         # check the split to know what kind of node we have to add
         action, split_attribute_low = check_split(data_low,
@@ -87,7 +89,6 @@ class TrainingHandler:
         if action == Actions.ADD_LEAF:
             self.leaf_node_creation(parent_node, node_name, data_low)
         else:
-            split_attribute_low.threshold = threshold
             node, attr_type = self.node_creation(parent_node,
                     node_name, split_attribute_low)
             self.split_fn[attr_type](node, data_low, split_attribute_low)
@@ -103,7 +104,6 @@ class TrainingHandler:
         if action == Actions.ADD_LEAF:
             self.leaf_node_creation(parent_node, node_name, data_high)
         else:
-            split_attribute_high.threshold = threshold
             node, attr_type = self.node_creation(parent_node,
                     node_name, split_attribute_high)
             self.split_fn[attr_type](node, data_high, split_attribute_high)
