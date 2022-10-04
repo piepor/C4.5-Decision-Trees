@@ -5,6 +5,7 @@ from c4dot5.traininghandler import TrainingHandler
 from c4dot5.attributes import TrainingAttributes
 from c4dot5.nodes import Node
 from c4dot5.predictor import PredictionHandler
+from c4dot5.visualizer import Visualizer
 
 
 class DecisionTreeClassifier:
@@ -56,3 +57,12 @@ class DecisionTreeClassifier:
         if distribution:
             return predictions, predictions_distribution
         return predictions
+
+    def create_visualizer(self, title: str) -> Visualizer:
+        visualizer = Visualizer(self.decision_tree, title)
+        visualizer.create_digraph()
+        return visualizer
+
+    def view(self, title: str, folder_name: str='figures', view: bool=True):
+        visualizer = self.create_visualizer(title)
+        visualizer.save_view(folder_name, view=view)
