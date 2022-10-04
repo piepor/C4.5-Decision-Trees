@@ -1,7 +1,10 @@
+import os
 import pytest
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from sklearn import metrics
+import graphviz
 from c4dot5.DecisionTreeClassifier import DecisionTreeClassifier
 
 
@@ -39,6 +42,26 @@ def paper_attributes_map():
             "Windy": "boolean", "Temperature": "continuous"}
     return attr
 
+@pytest.fixture
+def graph_paper():
+    dot = graphviz.Digraph(name="Paper-tree", comment="Paper-tree")
+    dot.node("root", "root \n [split attribute: Outlook]")
+    dot.node("Outlook = overcast", "Outlook = overcast \n [Classes]: \n - Play: 4.0")
+    dot.edge("root", "Outlook = overcast")
+    dot.node("Outlook = rain", "Outlook = rain \n [split attribute: Windy]")
+    dot.edge("root", "Outlook = rain")
+    dot.node("Windy = False", "Windy = False \n [Classes]: \n - Play: 3.0")
+    dot.edge("Outlook = rain", "Windy = False")
+    dot.node("Windy = True", "Windy = True \n [Classes]: \n - Don't Play: 2.0")
+    dot.edge("Outlook = rain", "Windy = True")
+    dot.node("Outlook = sunny", "Outlook = sunny \n [split attribute: Humidity]")
+    dot.edge("root", "Outlook = sunny")
+    dot.node("Humidity <= 75.0", "Humidity <= 75.0 \n [Classes]: \n - Play: 2.0")
+    dot.edge("Outlook = sunny", "Humidity <= 75.0")
+    dot.node("Humidity > 75.0", "Humidity > 75.0 \n [Classes]: \n - Don't Play: 3.0")
+    dot.edge("Outlook = sunny", "Humidity > 75.0")
+    return dot
+
 def test_classifier_paper_training(paper_dataset, paper_attributes_map):
     decision_tree = DecisionTreeClassifier(paper_attributes_map)
     decision_tree.fit(paper_dataset)
@@ -64,3 +87,21 @@ def test_predict(paper_dataset, paper_attributes_map):
     decision_tree.fit(paper_dataset)
     predctions = decision_tree.predict(paper_dataset)
     assert metrics.accuracy_score(paper_dataset['target'], predctions) == 1.0
+
+def test_crate_visualizer(paper_dataset, paper_attributes_map, graph_paper):
+    decision_tree = DecisionTreeClassifier(paper_attributes_map)
+    decision_tree.fit(paper_dataset)
+    visualizer = decision_tree.create_visualizer('Paper-tree')
+    assert visualizer.dot.source == graph_paper.source
+
+def test_view(paper_dataset, paper_attributes_map, graph_paper):
+    decision_tree = DecisionTreeClassifier(paper_attributes_map)
+    decision_tree.fit(paper_dataset)
+    decision_tree.view('Paper-tree', view=False)
+    # image
+    assert Path(os.path.join(os.getcwd(), 'figures', 'Paper-tree.gv.png')).exists()
+    # source
+    assert Path(os.path.join(os.getcwd(), 'figures', 'Paper-tree.gv')).exists()
+    Path(os.path.join(os.getcwd(), 'figures', 'Paper-tree.gv.png')).unlink()
+    Path(os.path.join(os.getcwd(), 'figures', 'Paper-tree.gv')).unlink()
+    Path(os.path.join(os.getcwd(), 'figures')).rmdir()
