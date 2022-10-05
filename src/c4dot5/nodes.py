@@ -1,6 +1,7 @@
 """ Classes for different types of nodes """
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import Union
 import numpy as np
 from c4dot5.attributes import DecisionNodeAttributes, LeafNodeAttributes, NodeType
 from c4dot5.node_utils import continuous_test_fn, get_distribution
@@ -18,7 +19,7 @@ class Node(ABC):
         """ Returns the name of the node """
 
     @abstractmethod
-    def get_parent_node(self) -> Node:
+    def get_parent_node(self) -> DecisionNode:
         """ Get the node's parent """
 
 
@@ -98,7 +99,7 @@ class DecisionNodeContinuous(DecisionNode):
             return f"{self._attributes.attribute_name} <= {self._attributes.threshold}"
         return f"{self._attributes.attribute_name} > {self._attributes.threshold}"
 
-    def get_child(self, attr_value: float) -> Node:
+    def get_child(self, attr_value: float) -> Union[Node, None]:
         """ Returns the child compatible with the attribute value """
         required_child = None
         for child in self.get_children():
@@ -147,7 +148,7 @@ class DecisionNodeCategorical(DecisionNode):
         """ runs the test on attr_value and returns the test as a string """
         return f"{self._attributes.attribute_name} = {attr_value}"
 
-    def get_child(self, attr_value: str | bool) -> Node:
+    def get_child(self, attr_value: str | bool) -> Union[Node, None]:
         """ Returns the child fulfilling the condition given by the attribute value """
         required_child = None
         for child in self.get_children():
@@ -177,7 +178,7 @@ class LeafNode(Node):
         """ Get the node's parent """
         return self._parent_node
 
-    def _get_class_name(self) -> str:
+    def get_class_name(self) -> str:
         """ get the class with maximum number of samples """
         return max(zip(self._attributes.classes.values(), self._attributes.classes.keys()))[1]
 
@@ -185,15 +186,15 @@ class LeafNode(Node):
         """ Returns the distribution over the classes inside the leaf """
         return get_distribution(self._attributes.classes)
 
-    def get_purity(self) -> float:
+    def get_purity(self) -> np.float16:
         """ returns the percentage of the class with more samples (purity) """
-        return np.round(self.get_classes_distribution()[self._get_class_name()], 4)
+        return np.round(self.get_classes_distribution()[self.get_class_name()], 4)
 
     def get_classes(self) -> dict:
         """ return the classes dictionary """
         return self._attributes.classes
 
-    def get_classes_names(self) ->dict:
+    def get_classes_names(self) -> list[str]:
         """ return the names of the target classes """
         return list(self._attributes.classes.keys())
 

@@ -1,8 +1,9 @@
 import copy
 import pandas as pd
+from typing import Union
 from c4dot5.predicting import create_predictions_dict, select_children_for_prediction
 from c4dot5.predicting import get_predictions_distribution
-from c4dot5.nodes import Node, LeafNode
+from c4dot5.nodes import Node, LeafNode, DecisionNode
 
 
 class PredictionHandler:

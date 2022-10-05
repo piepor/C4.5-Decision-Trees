@@ -4,8 +4,8 @@ from enum import Enum, auto
 import pandas as pd
 import numpy as np
 from c4dot5.nodes import DecisionNodeCategorical
-from c4dot5.nodes import DecisionNodeContinuous, LeafNode, Node
-from c4dot5.attributes import NodeAttributes, SplitAttributes
+from c4dot5.nodes import DecisionNodeContinuous, LeafNode, Node, DecisionNode
+from c4dot5.attributes import NodeAttributes, SplitAttributes, DecisionNodeAttributes, LeafNodeAttributes
 
 
 class Actions(Enum):
@@ -13,17 +13,17 @@ class Actions(Enum):
     ADD_LEAF = auto()
     SPLIT_NODE = auto()
 
-def create_continuous_decision_node(node_attributes: NodeAttributes, parent_node: Node) -> None:
+def create_continuous_decision_node(node_attributes: DecisionNodeAttributes, parent_node: Node) -> DecisionNode:
     """ create a continuous decision node """
     return DecisionNodeContinuous(node_attributes, parent_node)
 
 
-def create_categorical_decision_node(node_attributes: NodeAttributes, parent_node: Node) -> None:
+def create_categorical_decision_node(node_attributes: DecisionNodeAttributes, parent_node: Node) -> DecisionNode:
     """ create a continuous decision node """
     return DecisionNodeCategorical(node_attributes, parent_node)
 
 
-def create_leaf_node(node_attributes: NodeAttributes, parent_node: Node) -> None:
+def create_leaf_node(node_attributes: LeafNodeAttributes, parent_node: Node) -> LeafNode:
     """ create a continuous decision node """
     return LeafNode(node_attributes, parent_node)
 
@@ -50,7 +50,7 @@ def extract_max_gain_attributes(data: pd.DataFrame, split_attr: SplitAttributes)
     return split_attr
 
 def compute_local_threshold_gain(data_in: pd.DataFrame, threshold: float,
-        attr_name: str, split_gain: float) -> [float, float]:
+        attr_name: str, split_gain: float) -> tuple[float, float]:
     """ compute infomation gain and split infomation """
     freq_attr = data_in[data_in[attr_name] <= threshold][attr_name].count() / len(data_in)
     class_entropy_low = class_entropy(

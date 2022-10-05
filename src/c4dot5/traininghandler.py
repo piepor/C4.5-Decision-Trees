@@ -139,7 +139,7 @@ class TrainingHandler:
 
     def node_creation(self,
             parent_node: Node, node_name: str,
-            split_attribute: SplitAttributes) -> [Node, AttributeType]:
+            split_attribute: SplitAttributes) -> tuple[Node, AttributeType]:
         """ create the node corresponding to split attribute """
         attr_name = split_attribute.attr_name
         attr_type = self.decision_tree.get_attributes()[attr_name]

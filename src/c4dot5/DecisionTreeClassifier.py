@@ -6,6 +6,7 @@ from c4dot5.attributes import TrainingAttributes
 from c4dot5.nodes import Node
 from c4dot5.predictor import PredictionHandler
 from c4dot5.visualizer import Visualizer
+from c4dot5.rules_extractor import initialize_rules_extractor
 
 
 class DecisionTreeClassifier:
@@ -14,7 +15,7 @@ class DecisionTreeClassifier:
             attributes_map: dict,
             max_depth: int=10,
             node_purity: float=0.9,
-            min_instances: int=2
+            min_instances: int=2,
             ):
         self.decision_tree = DecisionTree(attributes_map)
         training_attributes = TrainingAttributes(
@@ -66,3 +67,14 @@ class DecisionTreeClassifier:
     def view(self, title: str, folder_name: str='figures', view: bool=True):
         visualizer = self.create_visualizer(title)
         visualizer.save_view(folder_name, view=view)
+
+    # TODO make tests
+    def get_rules(self, extraction_method: str, view_tree: bool=False, folder_name: str='figures') -> Union[dict, DecisionTree]:
+        rules_extractor = initialize_rules_extractor(extraction_method, self.training_handler.complete_dataset, self.decision_tree)
+        rules_extractor.compute()
+        rules = rules_extractor.get_rules()
+        if view_tree:
+            visualizer = Visualizer(rules_extractor.decision_tree, f'Tree-{extraction_method}')
+            visualizer.save_view(folder_name, view=True)
+        return rules
+
