@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+from typing import Union
 from c4dot5.attributes import SplitAttributes, TrainingAttributes
 from c4dot5.training import extract_max_gain_attributes, class_entropy, Actions
 from c4dot5.training import are_there_at_least_two, compute_local_threshold_gain
@@ -133,7 +134,7 @@ def get_split_gain_continuous(data_in: pd.DataFrame, min_instances: int) -> Spli
 def check_split(data_in: pd.DataFrame,
         attributes: TrainingAttributes,
         attr_fn_map: dict,
-        attr_map: dict) -> [Actions, SplitAttributes]:
+        attr_map: dict) -> tuple[Actions, Union[SplitAttributes, None]]:
     """ check the split on a node and tells the action to take """
     if data_in.empty:
         raise Exception("you should not be here")
@@ -142,13 +143,13 @@ def check_split(data_in: pd.DataFrame,
     if not split_attributes.attr_name or node_purity > attributes.node_purity:
         return Actions.ADD_LEAF, None
     node_errs_perc = data_in['target'].value_counts().sum() - data_in['target'].value_counts().max()
-    node_errs_perc = node_errs_perc / len(data_in)
+    node_errs_perc = np.round(node_errs_perc / len(data_in), 4)
     child_errs_perc = split_attributes.errs_perc
     if child_errs_perc >= node_errs_perc:
         return Actions.ADD_LEAF, None
     return Actions.SPLIT_NODE, split_attributes
 
-def compute_split_error_cont(data_in: pd.DataFrame, threshold: float=None) -> int:
+def compute_split_error_cont(data_in: pd.DataFrame, threshold: float) -> float:
     """
     Computes the error made by the split of a continuous attribute if predicting
     the most frequent class for every child born after it. data_in contains only
@@ -171,9 +172,10 @@ def compute_split_error_cont(data_in: pd.DataFrame, threshold: float=None) -> in
     errors_right_perc = errors_right / len(split_right)
 #    total_child_error = errors_left + errors_right
 #    return total_child_error/len(data_in)
-    return min(errors_left_perc, errors_right_perc)
+    #return min(errors_left_perc, errors_right_perc)
+    return (errors_left + errors_right) / len(data_in)
 
-def compute_split_error_cat(data_in: pd.DataFrame) -> int:
+def compute_split_error_cat(data_in: pd.DataFrame) -> float:
 #def compute_split_error_cat(data_in: pd.DataFrame, threshold: float=None) -> int:
     """
     Computes the error made by the split if predicting
@@ -189,4 +191,5 @@ def compute_split_error_cat(data_in: pd.DataFrame) -> int:
         #total_child_error += values_count.sum() - values_count.max()
         errors.append((values_count.sum() - values_count.max()) / len(split))
     #return total_child_error/len(data_in)
-    return min(errors)
+    #return min(errors)
+    return sum(errors) / len(data_in)
