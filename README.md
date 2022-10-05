@@ -23,8 +23,8 @@ decision_tree = DecisionTreeClassifier(attributes_map)
 decision_tree.fit(training_dataset)
 ```
 To make predictions, simply use the .predict() method
-```python
 data_input = pd.DataFrame.from_dict({
+```python
 	"Outlook": ["sunny"], "Temperature": [65], "Humidity": [90], "Windy": [False]})
 prediction = decision_tree.predict(data_input)
 print(prediction)
@@ -33,3 +33,10 @@ To visualize the decision tree use method .view(). It will show the tree and sav
 ```python
 decision_tree.view(folder_name='figures', title='Quinlan-Tree')
 ```
+To extract the splitting rules of the decision tree use the method .get_rules()
+```python
+rules = decision_tree.get_rules()
+for rule in rules:
+  print(f"{rule}: {rules[rule]}")
+```
+
