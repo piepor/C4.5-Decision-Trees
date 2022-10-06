@@ -3,7 +3,7 @@ Implementation of the Quinlan's algorithm to train a decision tree and make infe
 
 # Installation
 ```
-pip install -i https://test.pypi.org/simple/ c4dot5-decision-tree
+pip install c4dot5-decision-tree
 ```
 
 # Usage
