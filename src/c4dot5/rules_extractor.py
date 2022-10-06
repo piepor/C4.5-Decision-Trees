@@ -26,6 +26,10 @@ class ExtractionMethod(ABC):
     def get_rules(self) -> dict:
         """ extract the rules from a decision tree """
 
+    @abstractmethod
+    def print_rules(self) -> dict:
+        """ extract the rules from a decision tree """
+
 class StandardExtraction(ExtractionMethod):
     def __init__(self, decision_tree: DecisionTree):
         self.decision_tree = copy(decision_tree)
@@ -38,6 +42,12 @@ class StandardExtraction(ExtractionMethod):
         if not self._rules:
             raise RulesNotFound("Rules not found. Pleas compute the rules before accessing them.")
         return self._rules
+
+    def print_rules(self):
+        if not self._rules:
+            raise RulesNotFound("Rules not found. Pleas compute the rules before accessing them.")
+        for rule in self._rules:
+            print(f"{rule}: {self._rules[rule]}")
 
 class DecisionTreePruning(ExtractionMethod):
     def __init__(self, decision_tree: DecisionTree, dataset: pd.DataFrame):
