@@ -23,8 +23,8 @@ decision_tree = DecisionTreeClassifier(attributes_map)
 decision_tree.fit(training_dataset)
 ```
 To make predictions, simply use the .predict() method
-data_input = pd.DataFrame.from_dict({
 ```python
+data_input = pd.DataFrame.from_dict({
 	"Outlook": ["sunny"], "Temperature": [65], "Humidity": [90], "Windy": [False]})
 prediction = decision_tree.predict(data_input)
 print(prediction)
