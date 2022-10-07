@@ -35,6 +35,10 @@ def class_entropy(data) -> float:
 def extract_max_gain_attributes(data: pd.DataFrame, split_attr: SplitAttributes) -> SplitAttributes:
     """ extract the attributes of the split with the max gain """
     max_idx = data['gain_ratio'].idxmax()
+    try:
+        data.iloc[max_idx]['gain_ratio']
+    except:
+        breakpoint()
     split_attr.gain_ratio = data.iloc[max_idx]['gain_ratio']
     split_attr.info_gain = data.iloc[max_idx]['info_gain']
     split_attr.at_least_two = data.iloc[max_idx]['not_near_trivial_subset']
@@ -66,6 +70,11 @@ def are_there_at_least_two(len_subsets: list[int], min_instances: int):
     """ checks if in the subsets are present at least two subset with
     more samples than min_instances """
     return len([True for len_subset in len_subsets if len_subset >= min_instances]) >= 2
+
+def check_minimum_instances(len_subsets: list[int], min_instances: int) -> bool:
+    """ checks if all subsets have the minimum number of instances """
+    return len([True for len_subset in len_subsets if len_subset >= min_instances]) == len(len_subsets)
+
 
 def get_total_threshold(data, local_threshold) -> float:
     """ Computes the threshold on the total dataset

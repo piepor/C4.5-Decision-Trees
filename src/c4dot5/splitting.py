@@ -34,7 +34,7 @@ def get_split(
                 tests_examined['errs_perc'].append(split_attributes.errs_perc)
         # select the best split
         tests_examined = pd.DataFrame.from_dict(tests_examined)
-        mean_info_gain = tests_examined['info_gain'].mean()
+        mean_info_gain = np.round(tests_examined['info_gain'].mean(), 4)
         # two conditions for the split to be chosen
         gain_ratio_gt_mean = tests_examined['info_gain'] >= mean_info_gain
         not_near_trivial_subset = tests_examined['not_near_trivial_subset']
@@ -45,7 +45,7 @@ def get_split(
                     select_max_gain_ratio, chosen_split_attributes)
         elif len(tests_examined[tests_examined['not_near_trivial_subset']]) != 0:
             # Otherwise 'select_max_gain_ratio' computed before is empty
-            select_max_gain_ratio = tests_examined[tests_examined['not_near_trivial_subset']]
+            select_max_gain_ratio = tests_examined[tests_examined['not_near_trivial_subset']].reset_index(drop=True)
             chosen_split_attributes = extract_max_gain_attributes(
                     select_max_gain_ratio, chosen_split_attributes)
     return chosen_split_attributes
@@ -189,7 +189,7 @@ def compute_split_error_cat(data_in: pd.DataFrame) -> float:
         split = filter_dataset_cat(data_in, attr_name, attr_value)
         values_count = split.groupby(['target'])["weight"].sum()
         #total_child_error += values_count.sum() - values_count.max()
-        errors.append((values_count.sum() - values_count.max()) / len(split))
+        errors.append(values_count.sum() - values_count.max())# / len(split))
     #return total_child_error/len(data_in)
     #return min(errors)
     return sum(errors) / len(data_in)

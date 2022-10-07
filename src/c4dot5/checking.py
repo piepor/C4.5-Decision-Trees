@@ -7,7 +7,7 @@ def check_attributes(node_attributes, parent_node):
     if node_attributes.node_level < 0:
         raise ValueError(f"Level must be positive. \
                 Node [{node_attributes.node_name}] - Parent [{parent_node.get_label()}")
-    if node_attributes.attribute_type == AttributeType.CONTINUOUS and not node_attributes.threshold:
+    if node_attributes.attribute_type == AttributeType.CONTINUOUS and node_attributes.threshold is None:
         parent_name = None
         if parent_node:
             parent_name = parent_node.get_label() # the root node does not have a parent node
