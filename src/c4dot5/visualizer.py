@@ -15,7 +15,7 @@ class Visualizer:
         self.dot = graphviz.Digraph(name=self.title, comment=self.title)
         root_node = self.decision_tree.get_root_node()
         label = f"{root_node.get_label()} \n [split attribute: {root_node.get_attribute()}]"
-        self.dot.node(f"{root_node.get_label()}", label)
+        self.dot.node(root_node.get_id(), label)
         children = sorted(list(root_node.get_children()), 
                           key=lambda x:x.get_label())
         for child in children:
@@ -26,8 +26,8 @@ class Visualizer:
             label = create_label_leaf_node(node)
         else:
             label = f"{node.get_label()} \n [split attribute: {node.get_attribute()}]"
-        self.dot.node(f"{node.get_label()}", label)
-        self.dot.edge(f"{parent_node.get_label()}", f"{node.get_label()}")
+        self.dot.node(node.get_id(), label)
+        self.dot.edge(parent_node.get_id(), node.get_id())
         if not isinstance(node, LeafNode):
             children = sorted(list(node.get_children()), 
                               key=lambda x:x.get_label())

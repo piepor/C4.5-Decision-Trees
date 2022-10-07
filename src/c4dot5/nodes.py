@@ -2,6 +2,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Union
+import uuid
 import numpy as np
 from c4dot5.attributes import DecisionNodeAttributes, LeafNodeAttributes, NodeType
 from c4dot5.node_utils import continuous_test_fn, get_distribution
@@ -22,6 +23,10 @@ class Node(ABC):
     def get_parent_node(self) -> DecisionNode:
         """ Get the node's parent """
 
+    @abstractmethod
+    def get_id(self) -> str:
+        """ Get the node's univoque index """
+    
 
 class DecisionNode(Node):
     """ Class implementing a decision node of a decision tree """
@@ -53,6 +58,7 @@ class DecisionNodeContinuous(DecisionNode):
         self._parent_node = parent_node
         self._childs = set()
         self._attributes = attributes
+        self._id = str(uuid.uuid4())
 
     def set_threshold(self, threshold: float):
         self._attributes.threshold = threshold
@@ -107,6 +113,9 @@ class DecisionNodeContinuous(DecisionNode):
                 required_child = child
         return required_child
 
+    def get_id(self) -> str:
+        return self._id
+
 
 class DecisionNodeCategorical(DecisionNode):
     """ Decision node splitting data on categorical attribute """
@@ -115,6 +124,7 @@ class DecisionNodeCategorical(DecisionNode):
         self._parent_node = parent_node
         self._children = set()
         self._attributes = attributes
+        self._id = str(uuid.uuid4())
 
     def get_level(self) -> int:
         """ Returns the level of the node in the tree """
@@ -156,6 +166,9 @@ class DecisionNodeCategorical(DecisionNode):
                 required_child = child
         return required_child
 
+    def get_id(self) -> str:
+        return self._id
+
 
 class LeafNode(Node):
     """ class implementing a leaf node of the decision tree """
@@ -164,6 +177,7 @@ class LeafNode(Node):
         self._parent_node = parent_node
         self._childs = set()
         self._attributes = attributes
+        self._id = str(uuid.uuid4())
         # The label class of the node is the class with maximum number of examples
 
     def get_level(self) -> int:
@@ -201,3 +215,6 @@ class LeafNode(Node):
     def get_instances_number(self) -> int:
         """ returns the number of samples classified in the leaf """
         return sum(self._attributes.classes.values())
+
+    def get_id(self) -> str:
+        return self._id

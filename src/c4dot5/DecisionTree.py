@@ -29,7 +29,7 @@ class DecisionTree:
                 }
         self.prediction_handler = None
         self.complete_dataset = None
-
+    
     def get_attributes(self) -> dict:
         """ returns the dictionary mapping data attributes and types """
         return self._attributes
