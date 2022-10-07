@@ -5,7 +5,7 @@ import numpy as np
 from typing import Union
 from c4dot5.attributes import SplitAttributes, TrainingAttributes
 from c4dot5.training import extract_max_gain_attributes, class_entropy, Actions
-from c4dot5.training import are_there_at_least_two, compute_local_threshold_gain
+from c4dot5.training import check_minimum_instances, compute_local_threshold_gain
 from c4dot5.filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
 
 
@@ -30,7 +30,7 @@ def get_split(
                 tests_examined['info_gain'].append(split_attributes.info_gain)
                 tests_examined['threshold'].append(split_attributes.local_threshold)
                 tests_examined['attribute'].append(column)
-                tests_examined['not_near_trivial_subset'].append(split_attributes.at_least_two)
+                tests_examined['not_near_trivial_subset'].append(split_attributes.min_instances_condition)
                 tests_examined['errs_perc'].append(split_attributes.errs_perc)
         # select the best split
         tests_examined = pd.DataFrame.from_dict(tests_examined)
@@ -83,10 +83,11 @@ def get_split_gain_categorical(data_in: pd.DataFrame, min_instances: int) -> Spl
     # check also if at least two of the subset contain at least two cases,
     # to avoid near-trivial splits
     len_subsets = list(data_in[attr_name].value_counts())
-    at_least_two = are_there_at_least_two(len_subsets, min_instances)
+    #at_least_two = are_there_at_least_two(len_subsets, min_instances)
+    minimum_instances_condition = check_minimum_instances(len_subsets, min_instances)
     # split_gain = info_gain
     split_attributes = SplitAttributes(
-            np.round(gain_ratio, 4), np.round(split_gain, 4), at_least_two, attr_name)
+            np.round(gain_ratio, 4), np.round(split_gain, 4), minimum_instances_condition, attr_name)
     split_attributes.errs_perc = np.round(compute_split_error_cat(data_in), 4)
     return split_attributes
 
@@ -119,12 +120,12 @@ def get_split_gain_continuous(data_in: pd.DataFrame, min_instances: int) -> Spli
         gain_ratio_temp = (freq_known * split_gain_threshold) / split_info
         len_subsets = [len(data_in[data_in[attr_name] <= threshold]),
                 len(data_in[data_in[attr_name] > threshold])]
-        at_least_two = are_there_at_least_two(len_subsets, min_instances)
+        minimum_instances_condition = check_minimum_instances(len_subsets, min_instances)
         # save if better threshold
-        if gain_ratio_temp > split_attributes.gain_ratio and at_least_two:
+        if gain_ratio_temp > split_attributes.gain_ratio and minimum_instances_condition:
             split_attributes.gain_ratio = np.round(gain_ratio_temp, 4)
             split_attributes.info_gain = np.round(split_gain_threshold, 4)
-            split_attributes.at_least_two = at_least_two
+            split_attributes.min_instances_condition = minimum_instances_condition
             split_attributes.local_threshold = threshold
             split_attributes.threshold = threshold
             split_attributes.attr_name = attr_name

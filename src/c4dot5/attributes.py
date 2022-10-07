@@ -63,7 +63,7 @@ class SplitAttributes:
     """ attributes of a node split """
     gain_ratio: float
     info_gain: float
-    at_least_two: bool
+    min_instances_condition: bool
     attr_name: Optional[str] = None
     local_threshold: Optional[float] = None
     errs_perc: Optional[float] = None
