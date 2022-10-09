@@ -41,7 +41,7 @@ def extract_max_gain_attributes(data: pd.DataFrame, split_attr: SplitAttributes)
         breakpoint()
     split_attr.gain_ratio = data.iloc[max_idx]['gain_ratio']
     split_attr.info_gain = data.iloc[max_idx]['info_gain']
-    split_attr.at_least_two = data.iloc[max_idx]['not_near_trivial_subset']
+    split_attr.min_instances_condition = data.iloc[max_idx]['not_near_trivial_subset']
     split_attr.attr_name = data.iloc[max_idx]['attribute']
     split_attr.local_threshold = data.iloc[max_idx]['threshold']
     split_attr.threshold = data.iloc[max_idx]['threshold']
@@ -86,3 +86,13 @@ def get_total_threshold(data, local_threshold) -> float:
 
 def substitute_nan(dataset: pd.DataFrame) -> pd.DataFrame:
     return dataset.fillna('?')
+
+def get_minimum_instances_categorical(dataset: pd.DataFrame, attr_name: str) -> list[int]:
+    return list(dataset[dataset[attr_name] != '?'].value_counts())
+
+def get_minimum_instances_continuous(dataset: pd.DataFrame, attr_name: str, threshold: float) -> list[int]:
+    dataset_known = dataset[dataset[attr_name] != '?'].copy()
+    len_subsets = [
+            len(dataset_known[dataset_known[attr_name] <= threshold]),
+            len(dataset_known[dataset_known[attr_name] > threshold])]
+    return len_subsets
