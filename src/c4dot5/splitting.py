@@ -6,6 +6,7 @@ from typing import Union
 from c4dot5.attributes import SplitAttributes, TrainingAttributes
 from c4dot5.training import extract_max_gain_attributes, class_entropy, Actions
 from c4dot5.training import check_minimum_instances, compute_local_threshold_gain
+from c4dot5.training import get_minimum_instances_categorical, get_minimum_instances_continuous
 from c4dot5.filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
 
 
@@ -35,7 +36,11 @@ def get_split(
         # select the best split
         tests_examined = pd.DataFrame.from_dict(tests_examined)
         mean_info_gain = np.round(tests_examined['info_gain'].mean(), 4)
-        # two conditions for the split to be chosen
+        # keep only splits with info gain greater then zero
+        tests_examined = tests_examined[tests_examined['info_gain'] > 0.0].reset_index(drop=True)
+        # two conditions for the split to be chosen 
+        # 1) info gain greater then the mean AND minimum instances condition
+        # 2) only minimum instances condition 
         gain_ratio_gt_mean = tests_examined['info_gain'] >= mean_info_gain
         not_near_trivial_subset = tests_examined['not_near_trivial_subset']
         select_max_gain_ratio = tests_examined[
@@ -82,8 +87,10 @@ def get_split_gain_categorical(data_in: pd.DataFrame, min_instances: int) -> Spl
     gain_ratio = (freq_known * split_gain) / split_info
     # check also if at least two of the subset contain at least two cases,
     # to avoid near-trivial splits
-    len_subsets = list(data_in[attr_name].value_counts())
+    #breakpoint()
+    # len_subsets = list(data_in[attr_name].value_counts())
     #at_least_two = are_there_at_least_two(len_subsets, min_instances)
+    len_subsets = get_minimum_instances_categorical(data_in, attr_name)
     minimum_instances_condition = check_minimum_instances(len_subsets, min_instances)
     # split_gain = info_gain
     split_attributes = SplitAttributes(
@@ -118,8 +125,11 @@ def get_split_gain_continuous(data_in: pd.DataFrame, min_instances: int) -> Spli
         if freq_known < 1.0:
             split_info += - (1 - freq_known) * np.log2(1 - freq_known)
         gain_ratio_temp = (freq_known * split_gain_threshold) / split_info
-        len_subsets = [len(data_in[data_in[attr_name] <= threshold]),
-                len(data_in[data_in[attr_name] > threshold])]
+        #breakpoint()
+        # data_in[data_in[attr_name] <= threshold]['weight'].sum() 
+        # len_subsets = [len(data_in[data_in[attr_name] <= threshold]),
+        #         len(data_in[data_in[attr_name] > threshold])]
+        len_subsets = get_minimum_instances_continuous(data_in, attr_name, threshold)
         minimum_instances_condition = check_minimum_instances(len_subsets, min_instances)
         # save if better threshold
         if gain_ratio_temp > split_attributes.gain_ratio and minimum_instances_condition:
@@ -140,11 +150,16 @@ def check_split(data_in: pd.DataFrame,
     if data_in.empty:
         raise Exception("you should not be here")
     split_attributes = get_split(data_in, attr_fn_map, attributes.min_instances, attr_map)
-    node_purity = data_in["target"].value_counts().max() / len(data_in)
+    # breakpoint()
+    # node_purity = data_in["target"].value_counts().max() / len(data_in)
+    node_purity = compute_node_purity(data_in)
     if not split_attributes.attr_name or node_purity > attributes.node_purity:
         return Actions.ADD_LEAF, None
-    node_errs_perc = data_in['target'].value_counts().sum() - data_in['target'].value_counts().max()
-    node_errs_perc = np.round(node_errs_perc / len(data_in), 4)
+    #node_errs_perc = data_in['target'].value_counts().sum() - data_in['target'].value_counts().max()
+    # values_count = data_in.groupby(['target'])["weight"].sum()
+    # node_errs = values_count.sum() - values_count.max()
+    node_errs = compute_node_errors(data_in)
+    node_errs_perc = np.round(node_errs / len(data_in), 4)
     child_errs_perc = split_attributes.errs_perc
     if child_errs_perc >= node_errs_perc:
         return Actions.ADD_LEAF, None
@@ -160,15 +175,17 @@ def compute_split_error_cont(data_in: pd.DataFrame, threshold: float) -> float:
     # if continuous type the split is binary given by th threshold
     split_left = filter_dataset_low(data_in, attr_name, threshold)
     # pandas function to count the occurnces of the different value of target
-    values_count = split_left.groupby(['target'])["weight"].sum()
-    # errors given by the difference between the sum of all occurrences and the most frequent
-    errors_left = values_count.sum() - values_count.max()
-    # compute perc
+    # values_count = split_left.groupby(['target'])["weight"].sum()
+    # # errors given by the difference between the sum of all occurrences and the most frequent
+    # errors_left = values_count.sum() - values_count.max()
+    errors_left = compute_node_errors(split_left)
+    # # compute perc
     errors_left_perc = errors_left / len(split_left)
     split_right = filter_dataset_high(data_in, attr_name, threshold)
-    values_count = split_right.groupby(['target'])["weight"].sum()
-    # errors given by the difference between the sum of all occurrences and the most frequent
-    errors_right = values_count.sum() - values_count.max()
+    # values_count = split_right.groupby(['target'])["weight"].sum()
+    # # errors given by the difference between the sum of all occurrences and the most frequent
+    # errors_right = values_count.sum() - values_count.max()
+    errors_right = compute_node_errors(split_right)
     # compute perc
     errors_right_perc = errors_right / len(split_right)
 #    total_child_error = errors_left + errors_right
@@ -194,3 +211,11 @@ def compute_split_error_cat(data_in: pd.DataFrame) -> float:
     #return total_child_error/len(data_in)
     #return min(errors)
     return sum(errors) / len(data_in)
+
+def compute_node_errors(data_in: pd.DataFrame) -> float:
+    values_count = data_in.groupby(['target'])["weight"].sum()
+    return values_count.sum() - values_count.max()
+
+def compute_node_purity(data_in: pd.DataFrame) -> float:
+    values_count = data_in.groupby(['target'])["weight"].sum()
+    return values_count.max() / len(data_in)
