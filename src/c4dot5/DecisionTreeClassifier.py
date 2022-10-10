@@ -69,7 +69,7 @@ class DecisionTreeClassifier:
         visualizer.save_view(folder_name, view=view)
 
     # TODO make tests
-    def get_rules(self, extraction_method: str='standard', view_tree: bool=False, folder_name: str='figures', print_rules=True) -> Union[dict, DecisionTree]:
+    def get_rules(self, extraction_method: str='standard', view_tree: bool=False, folder_name: str='figures', print_rules=True) -> dict:
         rules_extractor = initialize_rules_extractor(extraction_method, self.training_handler.complete_dataset, self.decision_tree)
         rules_extractor.compute()
         rules = rules_extractor.get_rules()
