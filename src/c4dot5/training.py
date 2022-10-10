@@ -88,7 +88,7 @@ def substitute_nan(dataset: pd.DataFrame) -> pd.DataFrame:
     return dataset.fillna('?')
 
 def get_minimum_instances_categorical(dataset: pd.DataFrame, attr_name: str) -> list[int]:
-    return list(dataset[dataset[attr_name] != '?'].value_counts())
+    return list(dataset[dataset[attr_name] != '?'][attr_name].value_counts())
 
 def get_minimum_instances_continuous(dataset: pd.DataFrame, attr_name: str, threshold: float) -> list[int]:
     dataset_known = dataset[dataset[attr_name] != '?'].copy()

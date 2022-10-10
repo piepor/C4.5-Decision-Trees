@@ -42,24 +42,23 @@ def paper_attributes_map():
             "Windy": "boolean", "Temperature": "continuous"}
     return attr
 
-@pytest.fixture
-def graph_paper():
+def create_graph_paper(ids):
     dot = graphviz.Digraph(name="Paper-tree", comment="Paper-tree")
-    dot.node("root", "root \n [split attribute: Outlook]")
-    dot.node("Outlook = overcast", "Outlook = overcast \n [Classes]: \n - Play: 4.0")
-    dot.edge("root", "Outlook = overcast")
-    dot.node("Outlook = rain", "Outlook = rain \n [split attribute: Windy]")
-    dot.edge("root", "Outlook = rain")
-    dot.node("Windy = False", "Windy = False \n [Classes]: \n - Play: 3.0")
-    dot.edge("Outlook = rain", "Windy = False")
-    dot.node("Windy = True", "Windy = True \n [Classes]: \n - Don't Play: 2.0")
-    dot.edge("Outlook = rain", "Windy = True")
-    dot.node("Outlook = sunny", "Outlook = sunny \n [split attribute: Humidity]")
-    dot.edge("root", "Outlook = sunny")
-    dot.node("Humidity <= 75.0", "Humidity <= 75.0 \n [Classes]: \n - Play: 2.0")
-    dot.edge("Outlook = sunny", "Humidity <= 75.0")
-    dot.node("Humidity > 75.0", "Humidity > 75.0 \n [Classes]: \n - Don't Play: 3.0")
-    dot.edge("Outlook = sunny", "Humidity > 75.0")
+    dot.node(ids["root"], "root \n [split attribute: Outlook]")
+    dot.node(ids["Outlook = overcast"], "Outlook = overcast \n [Classes]: \n - Play: 4.0")
+    dot.edge(ids["root"], ids["Outlook = overcast"])
+    dot.node(ids["Outlook = rain"], "Outlook = rain \n [split attribute: Windy]")
+    dot.edge(ids["root"], ids["Outlook = rain"])
+    dot.node(ids["Windy = False"], "Windy = False \n [Classes]: \n - Play: 3.0")
+    dot.edge(ids["Outlook = rain"], ids["Windy = False"])
+    dot.node(ids["Windy = True"], "Windy = True \n [Classes]: \n - Don't Play: 2.0")
+    dot.edge(ids["Outlook = rain"], ids["Windy = True"])
+    dot.node(ids["Outlook = sunny"], "Outlook = sunny \n [split attribute: Humidity]")
+    dot.edge(ids["root"], ids["Outlook = sunny"])
+    dot.node(ids["Humidity <= 75.0"], "Humidity <= 75.0 \n [Classes]: \n - Play: 2.0")
+    dot.edge(ids["Outlook = sunny"], ids["Humidity <= 75.0"])
+    dot.node(ids["Humidity > 75.0"], "Humidity > 75.0 \n [Classes]: \n - Don't Play: 3.0")
+    dot.edge(ids["Outlook = sunny"], ids["Humidity > 75.0"])
     return dot
 
 def test_classifier_paper_training(paper_dataset, paper_attributes_map):
@@ -88,13 +87,15 @@ def test_predict(paper_dataset, paper_attributes_map):
     predctions = decision_tree.predict(paper_dataset)
     assert metrics.accuracy_score(paper_dataset['target'], predctions) == 1.0
 
-def test_crate_visualizer(paper_dataset, paper_attributes_map, graph_paper):
+def test_crate_visualizer(paper_dataset, paper_attributes_map):
     decision_tree = DecisionTreeClassifier(paper_attributes_map)
     decision_tree.fit(paper_dataset)
     visualizer = decision_tree.create_visualizer('Paper-tree')
+    ids = {node.get_label(): node.get_id() for node in decision_tree.get_nodes()}
+    graph_paper = create_graph_paper(ids)
     assert visualizer.dot.source == graph_paper.source
 
-def test_view(paper_dataset, paper_attributes_map, graph_paper):
+def test_view(paper_dataset, paper_attributes_map):
     decision_tree = DecisionTreeClassifier(paper_attributes_map)
     decision_tree.fit(paper_dataset)
     decision_tree.view('Paper-tree', view=False)
