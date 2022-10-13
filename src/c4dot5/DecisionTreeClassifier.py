@@ -1,9 +1,10 @@
 import pandas as pd
+import pickle
 from typing import Union
 from c4dot5.DecisionTree import DecisionTree
 from c4dot5.traininghandler import TrainingHandler
 from c4dot5.attributes import TrainingAttributes
-from c4dot5.nodes import Node
+from c4dot5.nodes import Node, LeafNode
 from c4dot5.predictor import PredictionHandler
 from c4dot5.visualizer import Visualizer
 from c4dot5.rules_extractor import initialize_rules_extractor
@@ -44,7 +45,7 @@ class DecisionTreeClassifier:
         """ Returns nodes added in the tree """
         return self.decision_tree.get_nodes()
 
-    def get_leaves_nodes(self) -> set[Node]:
+    def get_leaves_nodes(self) -> set[LeafNode]:
         """ Returns a list of the leaves nodes """
         return self.decision_tree.get_leaves_nodes()
 
@@ -79,3 +80,7 @@ class DecisionTreeClassifier:
         if print_rules:
             rules_extractor.print_rules()
         return rules
+
+    def save(self, file_path: str):
+        with open(file_path, 'wb') as file:
+            pickle.dump(self, file)

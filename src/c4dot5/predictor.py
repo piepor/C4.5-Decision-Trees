@@ -4,6 +4,7 @@ from typing import Union
 from c4dot5.predicting import create_predictions_dict, select_children_for_prediction
 from c4dot5.predicting import get_predictions_distribution
 from c4dot5.nodes import Node, LeafNode, DecisionNode
+from c4dot5.exceptions import ChildrenNotFound
 
 
 class PredictionHandler:
@@ -24,7 +25,8 @@ class PredictionHandler:
         childs = select_children_for_prediction(row_input[attribute], node)
         for child in childs:
             if child is None:
-                breakpoint()
+                raise ChildrenNotFound(f"Can't find children for node [{node.get_label()}] and attribute [{attribute}] \
+                                       with value {row_input[attribute]}")
             if isinstance(child, LeafNode):
                 self._predictions_dict[child.get_label()] = child.get_classes()
             else:

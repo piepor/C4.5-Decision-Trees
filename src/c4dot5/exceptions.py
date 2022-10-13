@@ -14,3 +14,6 @@ class RootNodeNotFound(Exception):
 
 class PredictionHandlerNotFound(Exception):
     pass
+
+class ChildrenNotFound(Exception):
+    pass
