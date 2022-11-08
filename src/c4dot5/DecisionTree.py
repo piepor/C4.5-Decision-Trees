@@ -1,6 +1,6 @@
 import pandas as pd
 from typing import Union
-from c4dot5.nodes import Node, LeafNode
+from c4dot5.nodes import Node, LeafNode, DecisionNode
 from c4dot5.attributes import NodeAttributes, from_str_to_enum
 from c4dot5.attributes import NodeType, AttributeType
 from c4dot5.training import create_continuous_decision_node, create_categorical_decision_node
@@ -34,7 +34,7 @@ class DecisionTree:
         """ returns the dictionary mapping data attributes and types """
         return self._attributes
 
-    def get_root_node(self) -> Node:
+    def get_root_node(self) -> DecisionNode:
         """ Returns the root node of the tree """
         if not self._root_node:
             raise RootNodeNotFound("Fit the decision tree before accessing the root node.")
@@ -48,7 +48,7 @@ class DecisionTree:
         """ Returns a list of the leaves nodes """
         return {node for node in self._nodes if isinstance(node, LeafNode)}
 
-    def get_leaf_node(self, leaf_label: str) -> list[Node]:
+    def get_leaf_node(self, leaf_label: str) -> list[LeafNode]:
         """ Returns the leaf node with the desired label """
         if leaf_label not in {node.get_label() for node in self.get_leaves_nodes()}:
             raise LeafNotFound(f"No leaf labeled '{leaf_label}' found in the tree")
