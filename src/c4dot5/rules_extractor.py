@@ -64,6 +64,12 @@ class DecisionTreePruning(ExtractionMethod):
             raise RulesNotFound("Rules not found. Pleas compute the rules before accessing them.")
         return self._rules
 
+    def print_rules(self):
+        if not self._rules:
+            raise RulesNotFound("Rules not found. Pleas compute the rules before accessing them.")
+        for rule in self._rules:
+            print(f"{rule}: {self._rules[rule]}")
+
 class RulesPruning(ExtractionMethod):
     def __init__(self, decision_tree: DecisionTree, dataset: pd.DataFrame):
         self.decision_tree = copy(decision_tree)
@@ -77,3 +83,9 @@ class RulesPruning(ExtractionMethod):
         if not self._rules:
             raise RulesNotFound("Rules not found. Pleas compute the rules before accessing them.")
         return self._rules
+
+    def print_rules(self):
+        if not self._rules:
+            raise RulesNotFound("Rules not found. Pleas compute the rules before accessing them.")
+        for rule in self._rules:
+            print(f"{rule}: {self._rules[rule]}")
