@@ -1,6 +1,7 @@
 """ Functions related to the general training phase """
 
 from enum import Enum, auto
+from typing import Callable
 import pandas as pd
 import numpy as np
 from c4dot5.nodes import DecisionNodeCategorical
@@ -54,12 +55,12 @@ def extract_max_gain_attributes(data: pd.DataFrame, split_attr: SplitAttributes)
     return split_attr
 
 def compute_local_threshold_gain(data_in: pd.DataFrame, threshold: float,
-        attr_name: str, split_gain: float) -> tuple[float, float]:
+                                 attr_name: str, split_gain: float, evaluate_split_fn: Callable) -> tuple[float, float]:
     """ compute infomation gain and split infomation """
     freq_attr = data_in[data_in[attr_name] <= threshold][attr_name].count() / len(data_in)
-    class_entropy_low = class_entropy(
+    class_entropy_low = evaluate_split_fn(
             data_in[data_in[attr_name] <= threshold][['target', 'weight']])
-    class_entropy_high = class_entropy(
+    class_entropy_high = evaluate_split_fn(
             data_in[data_in[attr_name] > threshold][['target', 'weight']])
     split_gain_threshold = split_gain - freq_attr * class_entropy_low \
             - (1 - freq_attr) * class_entropy_high

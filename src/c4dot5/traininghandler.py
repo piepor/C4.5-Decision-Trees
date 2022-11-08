@@ -1,9 +1,10 @@
 import pandas as pd
+from typing import Callable
 from c4dot5.attributes import AttributeType, TrainingAttributes, NodeType
 from c4dot5.attributes import DecisionNodeAttributes, LeafNodeAttributes, SplitAttributes
 from c4dot5.nodes import Node
 from c4dot5.DecisionTree import DecisionTree
-from c4dot5.training import Actions, get_total_threshold, substitute_nan
+from c4dot5.training import Actions, get_total_threshold, substitute_nan, class_entropy
 from c4dot5.filtering import filter_dataset_cat, filter_dataset_high, filter_dataset_low
 from c4dot5.splitting import check_split, get_split_gain_categorical, get_split_gain_continuous
 from c4dot5.exceptions import SplitError
@@ -14,10 +15,12 @@ class TrainingHandler:
     def __init__(self,
             decision_tree: DecisionTree,
             #complete_dataset: pd.DataFrame,
-            training_attributes: TrainingAttributes):
+            training_attributes: TrainingAttributes,
+            evaluate_split_fn: Callable=class_entropy):
         self.decision_tree = decision_tree
         self.complete_dataset = None
         self.training_attributes = training_attributes
+        self.eval_split_fn = evaluate_split_fn
         self.get_split_fn = {
                 AttributeType.CONTINUOUS: get_split_gain_continuous,
                 AttributeType.CATEGORICAL: get_split_gain_categorical,
@@ -47,7 +50,7 @@ class TrainingHandler:
         # check if the split exists, create node and recurse
         action, split_attribute = check_split(
                 dataset, self.training_attributes,
-                self.get_split_fn, self.decision_tree.get_attributes())
+                self.get_split_fn, self.decision_tree.get_attributes(), self.eval_split_fn)
         # if split attribute does not exist then is a leaf
         if action == Actions.ADD_LEAF:
             raise SplitError(
@@ -70,7 +73,8 @@ class TrainingHandler:
         self.split_fn[attr_type](root_node, dataset, split_attribute)
 
     def split_continuous(self,
-            parent_node: Node, data_in: pd.DataFrame, split_attribute: SplitAttributes):
+                         parent_node: Node, data_in: pd.DataFrame, 
+                         split_attribute: SplitAttributes):
         """
         Recursively splits a dataset based on a continuous variable.
         decision tree adds the nodes
@@ -82,7 +86,8 @@ class TrainingHandler:
         data_low = filter_dataset_low(data_in, split_attribute.attr_name, threshold)
         # check the split to know what kind of node we have to add
         action, split_attribute_low = check_split(data_low,
-                self.training_attributes, self.get_split_fn, self.decision_tree.get_attributes())
+                                                  self.training_attributes, self.get_split_fn,
+                                                  self.decision_tree.get_attributes(), self.eval_split_fn)
         node_name = f"{parent_node.get_attribute()} <= {threshold}"
         if parent_node.get_level()+1 == self.training_attributes.max_depth:
             action = Actions.ADD_LEAF
@@ -97,7 +102,8 @@ class TrainingHandler:
         data_high = filter_dataset_high(data_in, split_attribute.attr_name, threshold)
         # check the split to know what kind of node we have to add
         action, split_attribute_high = check_split(data_high,
-                self.training_attributes, self.get_split_fn, self.decision_tree.get_attributes())
+                                                   self.training_attributes, self.get_split_fn, 
+                                                   self.decision_tree.get_attributes(), self.eval_split_fn)
         node_name = f"{parent_node.get_attribute()} > {threshold}"
         if parent_node.get_level()+1 == self.training_attributes.max_depth:
             action = Actions.ADD_LEAF
@@ -119,8 +125,8 @@ class TrainingHandler:
             # divide data
             data = filter_dataset_cat(data_in, split_attribute.attr_name, attr_value)
             action, split_attribute_child = check_split(data,
-                    self.training_attributes, self.get_split_fn,
-                    self.decision_tree.get_attributes())
+                                                        self.training_attributes, self.get_split_fn,
+                                                        self.decision_tree.get_attributes(), self.eval_split_fn)
             # change the local threshold to total if exists
             node_name = f"{split_attribute.attr_name} = {attr_value}"
             if parent_node.get_level()+1 == self.training_attributes.max_depth:

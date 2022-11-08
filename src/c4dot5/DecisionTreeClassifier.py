@@ -1,12 +1,13 @@
 import pandas as pd
 import pickle
-from typing import Union
+from typing import Union, Callable
 from c4dot5.DecisionTree import DecisionTree
 from c4dot5.traininghandler import TrainingHandler
 from c4dot5.attributes import TrainingAttributes
 from c4dot5.nodes import Node, LeafNode
 from c4dot5.predictor import PredictionHandler
 from c4dot5.visualizer import Visualizer
+from c4dot5.training import class_entropy
 from c4dot5.rules_extractor import initialize_rules_extractor
 
 
@@ -17,6 +18,7 @@ class DecisionTreeClassifier:
             max_depth: int=10,
             node_purity: float=0.9,
             min_instances: int=2,
+            evaluate_split_fn: Callable=class_entropy,
             ):
         self.decision_tree = DecisionTree(attributes_map)
         training_attributes = TrainingAttributes(
@@ -25,7 +27,8 @@ class DecisionTreeClassifier:
                 min_instances=min_instances)
         self.training_handler = TrainingHandler(
                 self.decision_tree,
-                training_attributes)
+                training_attributes,
+                evaluate_split_fn)
 
     def fit(self, dataset: pd.DataFrame):
         """ fit the input dataset """

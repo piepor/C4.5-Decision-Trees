@@ -17,3 +17,6 @@ class PredictionHandlerNotFound(Exception):
 
 class ChildrenNotFound(Exception):
     pass
+
+class WrongSplitEvaluationFunction(Exception):
+    pass
