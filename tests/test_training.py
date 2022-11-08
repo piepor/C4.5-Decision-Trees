@@ -3,7 +3,7 @@ import pandas as pd
 from c4dot5.DecisionTree import DecisionTree
 from c4dot5.traininghandler import TrainingHandler
 from c4dot5.attributes import TrainingAttributes
-from c4dot5.exceptions import SplitError
+from c4dot5.exceptions import SplitError, WrongSplitEvaluationFunction
 
 
 @pytest.fixture
@@ -25,6 +25,14 @@ def paper_attributes_map():
     attr = {"Outlook": "categorical", "Humidity": "continuous",
             "Windy": "boolean", "Temperature": "continuous"}
     return attr
+
+@pytest.fixture
+def wrong_out_entropy():
+    return ['One', 'list']
+
+@pytest.fixture
+def wrong_out_type_entropy():
+    return 'wrong_type'
 
 def test_continuous_split():
     attr_map = {"feat": "continuous"}
@@ -98,3 +106,35 @@ def test_stop_split_purity(paper_dataset, paper_attributes_map):
             training_attributes)
     with pytest.raises(SplitError):
         training_handler.split_dataset(paper_dataset)
+
+def test_wrong_eval_split_fn_cat(paper_dataset, paper_attributes_map, 
+                                 wrong_out_entropy, wrong_out_type_entropy):
+    dataset = paper_dataset[["Outlook", "target"]]
+    decision_tree = DecisionTree(paper_attributes_map)
+    training_attributes = TrainingAttributes()
+    training_handler = TrainingHandler(decision_tree,
+            training_attributes, evaluate_split_fn=wrong_out_entropy)
+    with pytest.raises(WrongSplitEvaluationFunction):
+        training_handler.split_dataset(dataset)
+    training_handler = TrainingHandler(decision_tree,
+            training_attributes, evaluate_split_fn=wrong_out_type_entropy)
+    with pytest.raises(WrongSplitEvaluationFunction):
+        training_handler.split_dataset(dataset)
+
+def test_wrong_eval_split_fn_cont(wrong_out_entropy, wrong_out_type_entropy):
+    attr_map = {"feat": "continuous"}
+    dataset = pd.DataFrame({
+        "feat": [20, 25, 19, 18, 17, 26, 30, 33, 47, 50],
+        "target": ["target_1", "target_1", "target_1", "target_1", "target_1",
+            "target_2", "target_2", "target_2", "target_2", "target_2"]
+        })
+    decision_tree = DecisionTree(attr_map)
+    training_attributes = TrainingAttributes()
+    training_handler = TrainingHandler(
+            decision_tree, training_attributes, evaluate_split_fn=wrong_out_entropy)
+    with pytest.raises(WrongSplitEvaluationFunction):
+        training_handler.split_dataset(dataset)
+    training_handler = TrainingHandler(
+            decision_tree, training_attributes, evaluate_split_fn=wrong_out_type_entropy)
+    with pytest.raises(WrongSplitEvaluationFunction):
+        training_handler.split_dataset(dataset)
